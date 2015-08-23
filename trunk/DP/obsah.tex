@@ -1,0 +1,1613 @@
+%==============================================================================
+\chapter{Úvod}
+
+ZX Spectrum je legendární 8-bitový poèítaè od firmy Sinclair, pojmenované po jejím zakladateli Clive Sinclairovi. První poèítaè ZX Spectrum pøi¹el na trh v~roce 1982 a ihned zaznamenal obrovský úspìch, kvùli své \uv{lidové} cenì a jednoduchosti. Ani po 30 letech tento poèítaè neupadl v~zapomnìní a stále pro nìj vznikají nové fanou¹kovské aplikace a hry.
+
+Poprvé jsem se s~tímto poèítaèem seznámil ve svých 14 letech v~roce 2002. Bìhem odpolední procházky mìstem jsem si v¹iml, ¾e vedle kontejneru le¾í jakási \uv{zvlá¹tní klávesnice}. V~tu chvíli jsem je¹tì nevìdìl, jaký poklad jsem právì objevil. Pøesto jsem tuto \uv{klávesnici} vzal a pøinesl si jí domù.
+
+Ukázalo se, ¾e se mi do ruky dostal poèítaè Didaktik Gama, co¾ je slovenský klon poèítaèe ZX Spectrum. Po zapojení bohu¾el nefungoval - nezobrazoval se ¾ádný obraz, ale po stisku klávesy pøitom vydával zvuky. Po detailnìj¹ím prozkoumání se ukázalo, ¾e v~televizním modulátoru byl ulomený jeden keramický kondenzátor. Po jeho výmìnì koneènì obraz naskoèil a já tak získal svùj první ZX Spectrum kompatibilní poèítaè.
+
+Psal se rok 2004, kdy¾ si ná¹ uèitel v~krou¾ku elektroniky na Støední prùmyslové ¹kole v~Jihlavì v¹iml mé záliby v~poèítaèích ZX Spectrum a daroval mi jeho vlastní poèítaè Didaktik M. Stal jsem se tedy majitelem ji¾ druhého klonu poèítaèe ZX Spectrum.
+
+Proto¾e moje záliba v~poèítaèích ZX Spectrum ani po tolika letech neopadla, rozhodl jsem se, ¾e v~rámci své diplomové práce vytvoøím svùj vlastní klon tohoto poèítaèe, který bude sestaven z~moderních souèástek (pøedev¹ím FPGA) a pou¾ívat moderní periferie (VGA monitor, SD/MMC karty...).
+
+Kapitola \ref{ch:historie} struènì pojednává o~Siru Clive Sinclairovi - mu¾i, který za v¹ím stojí. Také ètenáøe informuje o~historii poèítaèe ZX Spectrum a jeho rùzných variantách, které se objevily na trhu. Proto¾e je mým cílem vytvoøit emulátor, který bude kompatibilní s~poèítaèi ZX Spectrum, popsal jsem v~kapitole \ref{ch:architektura} jejich vnitøní architekturu.
+
+Kapitola \ref{ch:navrh} struènì popisuje mùj návrh emulátoru a také technologie, které jsem se rozhodl k~implementaci vyu¾ít. Z~návrhu jsem vycházel pøi implementaci hardwarové architektury emulátoru v~FPGA, popsané v~kapitole \ref{ch:hwreseni}.
+
+Aby bylo mo¾né pracovat s~SD/MMC kartami, ze kterých se naèítají a spou¹tìjí aplikace, musel jsem také naprogramovat operaèní systém ZX Simi OS popsaný v~kapitole \ref{ch:swreseni}, který tuto funkènost poskytuje. 
+
+Po otestování emulátoru na platformì FITkit jsem se rozhodl, ¾e navrhnu vlastní plo¹ný spoj, který bude ¹itý pøímo na míru emulátoru - bude obsahovat v¹echny potøebné konektory a bude pokud mo¾no co nejmen¹í a nejjednodu¹¹í. Tomuto tématu se vìnuje kapitola \ref{ch:fyzreal}.
+
+Nakonec jsem celý emulátor otestoval pomocí dobových aplikací a her, které jsou nyní volnì dostupné na internetu. Výsledky testování jsou shrnuty v~kapitole \ref{ch:testovani}.
+%==============================================================================
+\chapter{Historie poèítaèù ZX Spectrum}\label{ch:historie}
+\section{Sir Clive Marles Sinclair}\label{sec:sinclair}
+Informace v~této kapitole jsou èerpány z~\cite{fifo17} a \cite{wikiSinclair}.
+
+Poèítaèe ZX Spectrum jsou neodmyslitelnì spjaty se jménem Clive Sinclair. Mu¾em s~typickou ple¹í, brýlemi a plnovousem (obr. \ref{img:sinclairGumak}) , známý také jako \uv{strýèek Clive}. Øekneme si tedy o~tomto mu¾i pár slov.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.4]{img/CliveSinclairZXSpectrum.jpg}
+  \caption{Sir Clive Sinclair s~jeho ZX Spectrum 48K \cite{historieVyvojoveTrendy}}
+ \label{img:sinclairGumak}
+\end{figure}
+
+
+Narodil se 30. èervna 1940 nedaleko Richmondu v~hrabství Surrey. Jeho otec i strýèek pracovali jako techniètí in¾enýøi, co¾ mìlo na Clivea znaèný vliv. Clive nemìl ve ¹kole s~uèením problémy. Dokonce studoval i obory, které ani nemìl v~rozvrhu. V~deseti letech jeho uèitel matematiky na základní ¹kole poznal, ¾e u¾ nemá Clivea co nauèit a tak ho doporuèil na støední ¹kolu. Tìch pro¹el hned nìkolik a závìreèné zkou¹ky slo¾il nejprve na Highgate School a pak speciální zkou¹ky z~fyziky a matematiky na St. Georges.
+
+Matematika ho zajímala zøejmì nejvíce. Jako chlapec si navrhl kalkulátor programovatelný pomocí kartièek z~dìtské hry. Pro jednoduchost pøevádìl ve¹keré výpoèty na kombinace nul a jednièek. Teprve pozdìji zjistil, ¾e nevymyslel nic nového, ale ¾e objevil ji¾ dávno existující dvojkovou soustavu. Kromì matematiky se v¹ak zajímal také o~elektroniku.
+
+Rozhodl se, ¾e na vysokou ¹kolu nenastoupí a místo toho se v¹e nauèí sám. Chtìl vyrábìt elektronické výrobky, ale chybìly mu peníze. Pracoval tedy jako redaktor. Navrhoval a sestavoval elektronické obvody, které pak publikoval. Nakonec se mu podaøilo sehnat potøebné finance a zakládá firmu Sinclair Radionics Ltd. Pod touto znaèkou pak mimo jiné prodává svoje minirádio Sinclair Slimline, o~které byl obrovský zájem.
+
+Ke konci 70. let se zaèínají na trhu objevovat první osobní poèítaèe (Atari, Commodore), které v¹ak byly pomìrnì drahé (cca. 700 liber). To se Clive rozhodl zmìnit a tak v~lednu 1980 prezentoval na výstavì ve Wembley první model svého superminiaturního poèítaèe ZX-80, který se jako stavebnice prodával jen za 79 liber (to odpovídá 227 librám v~roce 2010). Rok poté se na trhu objevil ZX-81. V~roce 1982 pak vznikl legendární ZX Spectrum, který se stal mo¾ná nejúspì¹nìj¹ím domácím poèítaèem té doby.
+
+Titul \uv{Sir} získal pøi pøíle¾itosti svých 43. narozenin, pøi nich¾ byl pový¹en do ¹lechtického stavu. Toto pový¹ení bylo zdùvodnìno tím, ¾e se Sinclairova firma zaslou¾ila o~významný rozvoj britské elektrotechniky.
+
+Poèátek konce slavné znaèky Sinclair byl poèítaè Sinclair QL. Mìl být nástupcem ZX Spectra, ale kvùli ¹patné reklamní kampani a nekompatibilitì s~pùvodním Spectrem o~nìj nebyl pøíli¹ zájem. Firmu nezachránil ani ZX Spectrum Plus, který byl roz¹íøením pùvodního ZX Spectrum. Zájem postupnì klesal. Firma pøi¹la o~mno¾ství financí kvùli dal¹ímu neúspì¹nému projektu - elektrickému vozítku C5. Postupnì dochází k~zadlu¾ování firmy, kterému nezabrání ani vydání dal¹ího výborného poèítaèe ZX Spectrum 128K, které v¹ak ji¾ pochází ze ©panìlska.
+
+V~roce 1986 firma Amstrad zakoupila firmu Sinclair i s~právy na pou¾ití této obchodní znaèky a vyrobila modely Spectrum Plus 2 a Plus 3. Sir Clive Sinclair tímto nezmizel zcela ze scény. V~souèasné dobì se opìt zabývá vývojem elektrických vozítek. Jeho nejnovìj¹ím produktem je vozítko X-1.
+
+
+
+\section{Verze poèítaèù ZX}\label{sec:verzePocitaci}
+
+I~kdy¾ se tato práce zabývá pøedev¹ím návrhem emulátoru poèítaèe ZX Spectrum 48K (pøípadnì ZX Spectrum 128K), pro lep¹í pochopení problematiky bude vhodné zmínit se i o~pøímých pøedchùdcích tìchto poèítaèù.
+
+Informace v~této kapitole jsou èerpány z~\cite{wikiZ80, wikiZ81, wikiZXSpectrumEN, wikiZXSpectrumEN, historieVyvojoveTrendy}
+
+\subsection{ZX80}
+Jak ji¾ bylo zmínìno v~kapitole \ref{sec:sinclair}, jednalo se o~Sinclairùv první poèítaè. Vyu¾íval 8-bitový procesor Z80A firmy Zilog, který pracoval na frekvenci 3,25 MHz. Poèítaè byl vybaven 1 kB pamìti DRAM a 4 kB pamìti ROM, která obsahovala interpretr jazyka BASIC a ve¹keré obslu¾né rutiny (klávesnice, magnetofon, vykreslování obrazu...). 
+
+Grafický výstup byl pouze èerno-bílý textový s~rozli¹ením 32 * 24 znakù. Vzhledem k~softwarovému øe¹ení zobrazování (pomocí CPU) nebylo mo¾né pøi výpoètu pøekreslovat obraz, èím¾ docházelo k~blikání obrazu.
+
+Celý poèítaè byl zkonstruován pomocí 17 klasických TTL integrovaných obvodù, které byly normálnì k~dostání na trhu. Jako výstupní zaøízení se pou¾ívala obyèejná televize (stejnì jako u~v¹ech následujících modelù) a jako vnìj¹í pamì» se pou¾íval bì¾ný magnetofon.
+
+\subsection{ZX81}
+Tato verze s~sebou pøinesla vylep¹ený BASIC, který byl ulo¾en v~8 kB pamìti ROM. BASIC novì podporoval aritmetiku v~plovoucí øádové èárce. Poèítaè v¹ak zùstal stále vybaven pouze 1 kB pamìti RAM. Ta se v¹ak dala (stejnì jako u~ZX-80) roz¹íøit pomocí externího modulu.
+
+Zøejmì nejdùle¾itìj¹í zmìnou v¹ak bylo nahrazení v¹ech integrovaných obvodù pouze jediným integrovaným obvodem, tzv. ULA. To pøineslo znaèné sní¾ení spotøeby a sní¾ení ceny (49,99 liber, co¾ odpovídá cca 134 librám v~roce 2010). Navíc byla ULA schopna provádìt zobrazování i bìhem výpoètu CPU.
+
+\subsection{ZX Spectrum 16K / 48K}
+Po obrovském úspìchu ZX81 zaèala Sinclairova firma pracovat na dal¹ím poèítaèi s~kódovým oznaèením ZX82. Do svìta byl vypu¹tìn v~roce 1982 pod jménem ZX Spectrum (obr. \ref{img:ZXSpectrum48K}). Pozdìji se pro rozli¹ení od dal¹ích modelù v¾ilo oznaèení \uv{gumák}, odkazující na provedení jeho klávesnice. Vyrábìl se ve dvou verzích: s~16 kB RAM, nebo s~48 kB RAM, co¾ je oproti 1 kB u~ZX81 obrovský skok. To v¹ak nebyla jediná významná zmìna.
+
+Obvod ULA byla výrazným zpùsobem vylep¹en. Nyní ji¾ byl schopen sám generovat obraz zcela nezávisle na procesoru, zobrazoval 8 barev se 2 úrovnìmi jasu (tedy celkem 16 barev), podporoval blikání a umìl zobrazovat grafiku s~rozli¹ením 256*192 pixelù. Z~dùvodu zjednodu¹ení hardware a sní¾ení pamì»ových nárokù v¹ak mìla grafika zásadní omezení. Obrazovka byla rozdìlena do 32*24 ètvercù o~stranì 8 pixelù, pøièem¾ v~rámci jednoho ètverce bylo mo¾né zobrazovat pouze 2 barvy.
+
+Dále byla zvìt¹ena pamì» ROM na 16 kB, která obsahovala vylep¹ený BASIC a zvuk byl zaji¹tìn pomocí jednoduchého bzuèáku, který produkoval jednokanálový zvuk o~rozsahu 10 oktáv.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.1]{img/ZXSpectrum48K.jpg}
+  \caption{ZX Spectrum 48K \cite{wikiZXSpectrumEN}}
+  \label{img:ZXSpectrum48K}
+\end{figure}
+
+\subsection{ZX Spectrum +}
+Objevil se na trhu v~roce 1984. Hardware je shodný s~pøedchozí verzí ZX Spectrum 48K. Li¹í se pouze vzhledem, kvalitnìj¹í (plastovou) klávesnicí a pøidaným tlaèítkem RESET.
+
+\subsection{ZX Spectrum 128K}\label{sec:spectrum128}
+Poèítaè se na trh dostal v~roce 1986. Od pøedchozího modelu ZX Spectrum+ se vzhledem pøíli¹ neli¹il (obr. \ref{img:ZXSpectrum128K}). Z~pohledu hardwarového vybavení v¹ak ¹lo o~druhou revoluci.
+
+Pamì» ROM byla zvìt¹ena na 32 kB. V~dolních 16 kB byla ulo¾ena lehce upravená verze pùvodního 48K BASICu, horních 16 kB obsahovalo vylep¹ený editor.
+
+Hlavní zmìnou ale bylo roz¹íøení pamìti na 128 kB. Vzhledem k~tomu, ¾e pou¾itý Z80 CPU má pouze 16-bitovou adresovou sbìrnici, doká¾e adresovat pouze 64 kB. Pro adresování takto velké pamìti tedy bylo potøeba po¾ít podporu HW a speciální postup adresování, který bude vysvìtlen v~kapitole \ref{sec:RAMhier128}.
+
+Poèítaè také novì obsahuje tøíkanálový generátor zvuku AY-3-8912.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.3]{img/ZXSpectrum128K.jpg}
+  \caption{ZX Spectrum 128K \cite{wikiZXSpectrumEN}}
+  \label{img:ZXSpectrum128K}
+\end{figure}
+
+\subsection{Pozdìj¹í modely ZX Spectrum}
+\subsubsection{ZX Spectrum +2}
+Hardwarovì je zpìtnì kompatibilní se svým pøedchùdcem, obsahuje v¹ak vestavìný magnetofon a porty pro pøipojení joysticku.
+\subsubsection{ZX Spectrum +3}
+Kazetový magnetofon byl nahrazen 3" disketovou mechanikou. Pro její pou¾ití bylo potøeba upravit ROM, tak¾e byla její velikost navý¹ena na 64 kB. Také bylo potøeba upravit stránkování pamìti, èím¾ tento poèítaè pøinesl øadu nekompatibilit s~pøedchozími modely.
+\subsubsection{ZX Spectrum +2A / +2B}
+Poslední varianta tohoto poèítaèe. V~podstatì se jedná o~ZX Spectrum +3, kde je místo disketové mechaniky zpìt kazetový magnetofon. Oznaèení A~a B rozli¹ovalo jazykovou verzi ROM (A~= anglická, B = ¹panìlská)
+
+\subsection{ZX Spectrum kompatibilní klony}
+Díky obrovské popularitì poèítaèù ZX Spectrum se na trhu zaèaly brzy objevovat rùzné programovì kompatibilní klony. V~Èeskoslovensku napøíklad firma Didaktik Skalica zaèala v~roce 1987 vyrábìt poèítaèe Didaktik Gama, dále pak Didaktik M a nakonec Didaktik Kompakt, který ji¾ mìl vestavìnou 3,5" disketovou mechaniku.
+
+Obrovské mno¾ství klonù pochází také z~Ruska. Zmiòme napøíklad poèítaèe Pentagon 48/128/512, Moskva 48/128 a jiné.
+
+%==============================================================================
+\chapter{Architektura poèítaèe ZX Spectrum}\label{ch:architektura}
+Jak ji¾ bylo zmínìno v~kapitole \ref{sec:verzePocitaci}, v¹echny poèítaèe øady ZX Spectrum pou¾ívají procesor Z80A od firmy Zilog.
+O~v¹e ostatní se pak stará speciální zákaznický obvod ULA. Ten zaji¹»uje generování video-signálu pro televizor, generování hodin pro procesor, pøístup do pamìti, obnovování pamìti, øadiè klávesnice, magnetofonu a interního zvukového generátoru a pochopitelnì umo¾òuje pøístup CPU k~tìmto periferiím tak, aby televizní signál nebyl nikdy pøeru¹en a aby nedocházelo k~¾ádným kolizím na sbìrnici.
+
+V~této kapitole jsem vycházel z~informací uvedených v~této literatuøe: \cite{zxSpectrumULA} \cite{amaro89}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=1]{img/architektura_zx_spectrum.png}
+  \caption{Blokový diagram poèítaèe ZX Spectrum}
+  \label{img:archZXS}
+\end{figure}
+
+Blokové schéma poèítaèe je znázornìno na obrázku \ref{img:archZXS}. Jádrem poèítaèe je procesor Z80A. Ten je pøipojen pøímo k~ULA, která realizuje ji¾ zmínìné funkce. V~této kapitole se detailnì podíváme na architekturu poèítaèe ZX Spectrum a vysvìtlíme si, jakým zpùsobem vlastnì ULA funguje.
+
+\section{Procesor Z80A}\label{sec:Z80}
+Procesor Z80 byl vyroben firmou Zilog Inc. v~roce 1976 a vychází z~procesoru Intel 8080 z~roku 1974. Ve firmì Intel ho navrhl Federico Faggin, zakladatel firmy Zilog. Procesor Z80 se pak stal jedním z~nejdominantnìj¹ích procesorù koncem 70. a zaèátkem 80. let.
+
+Procesor Z80 je binárnì kompatibilní se svým pøedchùdcem 8080, ale pøiná¹í velké mno¾ství roz¹íøení. Obsahuje roz¹íøenou instrukèní sadu, nové registry, vylep¹enou obsluhu pøeru¹ení a podporu 16-bitového I/O adresování. Navíc doká¾e sám obstarávat refresh dynamických pamìtí, èeho¾ bylo vyu¾ito napø. u~poèítaèe ZX80 a ZX81. U~øady ZX Spectrum se ji¾ o~obnovování pamìti stará ULA.
+
+Pro pochopení mého øe¹ení je dùle¾ité ètenáøe seznámit s~èasovými prùbìhy procesoru. Z80 je procesor typu CISC (Complex Instruction Set Computer) - instrukce jsou tedy komplexnìj¹í a jejich provádìní trvá rùznì dlouhou dobu. Na obrázku \ref{img:z80instrCycle} je ukázán obecný èasový prùbìh zpracování jedné konkrétní instrukce. Jeden \textit{instrukèní cyklus} (instruction cycle) je rozdìlen do nìkolika \textit{strojových cyklù} (machine cycle). První strojový cyklus ka¾dé instrukce je v¾dy \textit{naètení operaèního kódu} (opcode fetch) oznaèovaný jako M1. Následující sekvence strojových cyklù, které pøesouvají data mezi pamìtí nebo I/O rozhraním, se pak ji¾ u~ka¾dé instrukce li¹í.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.4]{img/z80instrCycle.png}
+  \caption{Pøíklad základního èasování CPU \cite{z80userManual}}
+  \label{img:z80instrCycle}
+\end{figure}
+
+Obrázek \ref{img:z80fetch} ukazuje èasování bìhem fáze M1 (ètení operaèního kódu). Nejdøíve je na adresovou sbìrnici vystaven obsah registru PC (Program Counter) a pin /M1 se nastaví do nízké (aktivní) úrovnì, který indikuje provádìní fáze M1. S~urèitým zpo¾dìním se do nízké (aktivní úrovnì) nastaví piny /MREQ a /RD, které indikují po¾adavek ètení z~pamìti. V~taktu T3 procesor naète data na vstupu a souèasnì zaène obnovovat dynamickou pamì». Dùle¾itou vlastností je, ¾e mù¾eme pomocí signálu /WAIT procesoru indikovat, ¾e data na jeho vstupu je¹tì nejsou pøipravena. V~takovém pøípadì procesor èeká, dokud signál /WAIT opìt nevrátíme do stavu vysoké úrovnì a teprve pak procesor vstupní data naète a pokraèuje ve výpoètu. Tato vlastnost je velice dùle¾itá, proto¾e pøístup do DRAM není okam¾itý (obecnì trvá více taktù) a kromì procesoru do ní potøebuje pøistupovat i ULA (napøíklad pro vykreslování obrazu nebo obnovu pamìti).
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.4]{img/z80fetch.png}
+  \caption{Naètení operaèního kódu (opcode fetch) \cite{z80userManual}}
+  \label{img:z80fetch}
+\end{figure}
+
+Èasování procesoru pøi bì¾ném ètení a zápisu do pamìti je ukázán na obrázku \ref{img:z80mem}. Princip je velice podobný jako u~fáze M1. To, ¾e procesor chce pøistupovat k~pamìti, je indikováno signálem /MREQ a signály /RD nebo /WR. Opìt zùstává dùle¾itá vlastnost, ¾e je mo¾né zápis i ètení pozdr¾et pomocí signálu /WAIT. Úplnì stejnì funguje i pøístup k~I/O rozhraní, pouze s~tím rozdílem, ¾e místo signálu /MREQ se pou¾ije signál /IORQ. Z~úsporných dùvodù zde ji¾ není èasový prùbìh zobrazen.
+
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.4]{img/z80mem.png}
+  \caption{Ètení z~pamìti / zápis do pamìti \cite{z80userManual}}
+  \label{img:z80mem}
+\end{figure}
+
+\section{Uspoøádání pamì»ového prostoru}\label{sec:RAMhier}
+Vzhledem k~tomu, ¾e procesor Z80A má 16-bitovou adresovací sbìrnici, je schopen adresovat $2^{16} = 65536$ bajtù. Do tohoto adresového prostoru je v~poèítaèi ZX Spectrum namapována pamì» ROM i pamì» RAM. Funkci adresového dekodéru plní obvod ULA.
+
+Procesor indikuje po¾adavek na komunikaci s~pamìtí pomocí signálu /MREQ. Signál /RD pak indikuje po¾adavek ètení z~pamìti, signál /WR zápis do pamìti. Pokud je právì pamì» obsazena, obvod ULA pozastaví procesor pomocí signálu /WAIT. Jakmile se pamì» uvolní a ULA mù¾e tento po¾adavek splnit, vystaví na adresovou, datovou a øídící sbìrnici potøebné signály pro pamì» a po dokonèení opìt spustí procesor.
+
+Z~kapitoly \ref{sec:verzePocitaci} víme, ¾e pamì»ová hierarchie je u~verze 48K a 128K odli¹ná. Proto si nyní obì tyto architektury popí¹eme oddìlenì.
+
+\subsection{ZX Spectrum 16K / 48K}
+Mapování pamìti v~poèítaèi ZX Spectrum 48K je zobrazeno v~tabulce \ref{tab:memMap48}. Celý adresní prostor o~velikosti 64 kB je rozdìlen na 4 banky o~velikosti 16 kB. Adresace v~rámci jedné banky se provádí pomocí nejni¾¹ích 14 bitù adresy (A13..A0). Horní dva bity (A15..A14) rozhodují o~tom, která banka se pou¾ije.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  {\bf Adresa} & {\bf A15} & {\bf A14} & {\bf Pamì»}\\ \hline\hline
+  0000h..3FFFh & 0 & 0 & 16 kB ROM  \\ \hline
+  4000h..7FFFh & 0 & 1 & 16 kB RAM  \\ \hline
+  8000h..BFFFh & 1 & 0 & 32 kB RAM - prvních 16 kB  \\ \hline
+  C000h..FFFFh & 1 & 1 & 32 kB RAM - posledních 16 kB \\ \hline
+\end{tabular}
+\caption{Mapování pamìti v~poèítaèi ZX Spectrum 48K}
+\label{tab:memMap48}
+\end{table}
+
+Toto adresování je stejné u~poèítaèe ZX Spectrum 16K i ZX Spectrum 48K. U~ZX Spectrum 16K je v¹ak osazeno pouze spodních 16 kB RAM. Od adresy 8000h..FFFFh ¾ádná pamì» není.
+
+\subsubsection{Pamì» ROM}
+V~poèítaèi ZX Spectrum 16K/48K se nachází pamì» ROM o~velikosti 16 kB. Ta je umístìna do adresového prostoru od adresy 0000h a¾ do 3FFFh. V~této pamìti je ulo¾en ulo¾en kompletní operaèní systém vèetnì interpretu jazyka BASIC. Tento systém na zakázku vytvoøili programátoøi John Grant a Steven Vickers ze spoleènosti Nine Tiles Information Handling Ltd. \cite{zxSpectrumULA}
+
+\subsubsection{Pamì» RAM}
+Pamì» RAM se dìlí na dvì èásti. První èást je velká 16 kB a nachází se na adrese 4000h..7FFFh. Prvních 6912 bajtù je pou¾ito pro ulo¾ení obrazu (video display memory, nebo-li Video RAM). ULA z~této pamìti postupnì vybírá informace zapsané procesorem a zobrazuje je na TV. Zbytek této pamìti je pou¾it pro ulo¾ení systémových promìnných a u¾ivatelského programu.
+
+Druhá èást RAM má velikost 32 kB a nachází se na adrese 8000h a¾ FFFFh. Jak ji¾ bylo øeèeno, u~verze ZX Spectrum 16K tato pamì» chybìla. Bylo ale mo¾né zakoupit roz¹iøující kartu s~touto pamìtí, která se dala zapojit do systémové sbìrnice.
+
+
+\subsection{ZX Spectrum 128K}\label{sec:RAMhier128}
+Mapování pamìti v~poèítaèi ZX Spectrum 128K je zobrazeno v~tabulce \ref{tab:memMap128}.
+
+\begin{table}
+\centering
+\begin{tabular}{|c||c|c|c|c|c|c|c|c|}
+  \hline
+  {\bf Adresa} & \multicolumn{8}{|c|}{{\bf Pamì»ová banka}} \\ \hline\hline
+  C000h..FFFFh & RAM0 & RAM1 & RAM2 & RAM3 & RAM4 & RAM5 & RAM6 & RAM7 \\ \hline 
+  8000h..BFFFh & RAM2 & \multicolumn{7}{|c|}{} \\ \hline
+  4000h..7FFFh & RAM5 & \multicolumn{7}{|c|}{} \\ \hline
+  0000h..3FFFh & ROM0 & ROM1 & \multicolumn{6}{|c|}{} \\ \hline
+\end{tabular}
+\caption{Mapování pamìti v~poèítaèi ZX Spectrum 128K}
+\label{tab:memMap128}
+\end{table}
+
+
+\subsubsection{Pamì» ROM}
+
+Jak bylo zmínìno v~kapitole \ref{sec:spectrum128}, v~poèítaèi ZX Spectrum 128K je pamì» ROM o~velikosti 32 kB. Procesor je v¹ak stále schopen adresovat pouze 65536 bajtù, tak¾e pokud by byla pamì» ROM do adresového prostoru mapována celá, mohla by mít pamì» RAM velikost pouze 32 kB. Navíc by takový poèítaè nebyl kompatibilní s~pùvodním ZX Spectrum 48K. Proto bylo nutné pøistoupit k~jinému øe¹ení.
+
+Pamì» ROM byla rozdìlena na dvì èásti (ROM0 a ROM1), ka¾dá o~velikosti 16 kB. Obì tyto ROM jsou mapovány od adresy 0000h do 3FFFh (viz. tab. \ref{tab:memMap128}). O~výbìr správné ROM se pomocí speciálního registru stará obvod ULA. Toto øe¹ení bude popsáno dále. Aby byla zaji¹tìna kompatibilita s~poèítaèem ZX Spectrum 48K i po softwarové stránce, obsahuje pamì» ROM0 pùvodní (lehce modifikovaný) obsah ROM z~poèítaèe ZX Spectrum 48K, ROM1 obsahuje vylep¹ený editor BASICu a úvodní startovací menu.
+
+\subsubsection{Pamì» RAM}
+Z~názvu je zøejmé, ¾e v~poèítaèi je dostupných 128 kB RAM. Vzhledem k~tomu, ¾e procesor je schopen adresovat pouze 65536 bajtù, bylo nutné provést speciální úpravy tak, aby byl poèítaè schopen adresovat celých 128 kB.
+
+V~ULA pøibyl speciální 8-bitový registr na adrese 7FFDh, ke kterému procesor pøistupuje pomocí I/O instrukcí zápisu a ètení. Kvùli zjednodu¹ení HW se registr ve skuteènosti adresuje pouze pomocí dvou bitù: A15=0 a A1=0. Díky tomu nebylo nutné v~ULA implementovat celý 16-bitový komparátor adresy. Nevýhodou je, ¾e je kvùli tomuto øe¹ení obsazena ètvrtina celého adresního prostoru, který ji¾ není mo¾né kvùli kolizi adres pou¾ít. V~aplikaci se v¾dy doporuèuje adresovat tento registr pomocí jeho celé adresy.
+
+Jednotlivé bity v~registru mají následující význam:
+
+\begin{itemize}
+\item \textbf{bity 2..0} - Vybírají pamì»ovou banku (RAM0 a¾ RAM7), která je aktuálnì mapována na adrese C000h a¾ FFFFh (viz. tab. \ref{tab:memMap128}).
+\item \textbf{bit 3} - Vybírá pamì»ovou banku, ze které má ULA vykreslovat obraz (0=RAM5, 1=RAM7).
+\item \textbf{bit 4} - Vybírá aktuální pamì» ROM, která se namapuje na adresu 0000h a¾ 3FFFh (viz. tab. \ref{tab:memMap128}).
+\item \textbf{bit 5} - Zápisem log. 1 do tohoto bitu se zaká¾e zápis do celého registru. Opìtné povolení je mo¾né pouze resetováním celého poèítaèe.
+\item \textbf{bity 7..6} - Nejsou vyu¾ity.
+\end{itemize}
+
+Ètení z~tohoto registru je stejné, jako zápis hodnoty FFh.
+
+RAM2 je v¾dy mapována na adresu 8000h - BFFFh. Nyní v¹ak víme, ¾e je ji navíc mo¾né mapovat na adresu C000h - FFFFh. Obecnì to v¹ak není doporuèované. To stejné platí i pro RAM5.
+
+Dal¹í dùle¾itá informace je, ¾e ZX Spectrum 128K umo¾òuje pøepínat pamì»ovou banku, ze které se vykresluje obraz (3. bit v~registru 7FFDh). To umo¾òuje vytváøet plynulé animace. Z~jedné banky se vykresluje aktuální snímek a do druhé banky se mezi tím mù¾e generovat následující snímek. Tento bit ale nemá ¾ádný vliv na mapování pamìti. Na adrese 4000h - 7FFFh je v¾dy mapována banka RAM5. Pokud chceme zapisovat do RAM7, musíme si jí namapovat na adresu C000h - FFFFh pomocí bitù 0 a¾ 2 v~registru 7FFDh
+
+
+
+\section{Grafický výstup}
+Døíve ne¾ se pustíme do vysvìtlování konkrétního øe¹ení v~poèítaèi ZX Spectrum, nebude na ¹kodu vysvìtlit základní princip CRT televizoru, který se pou¾íval pro zobrazení obrazu v~originálním ZX Spectrum (zpracováno podle \cite{matatko}, \cite{zakladyTV}).
+
+\subsection{CRT obrazovka}
+
+CRT (Cathode Ray Tube) obrazovka je slo¾ena ze systému elektrod, které jsou ulo¾eny ve vyèerpané baòce, její¾ pøední stìna je z~vnitøní strany pokryta luminiscenèní vrstvou - luminoforem, který tvoøí stínítko. Na luminofor je zaostøován elektronový svazek, jeho¾ zdrojem je elektronová tryska umístìná v~hrdle obrazovky.
+
+Elektrony svazku jsou urychlovány vysokým kladným anodovým napìtím, dopadají na luminofor a odevzdávají jeho atomùm svojí kinetickou energii. Atomy pøijatou energii opìt vyzaøují ve formì viditelného svìtla, jeho¾ barva závisí na slo¾ení luminoforu. V~místì dopadu svazku na luminofor vzniká záøící bod. Pùsobením síly magnetického pole dochází k~vychylování svazku a je tak mo¾né záøící bod po plo¹e stínítka posouvat a vytváøet pomocí nìj svìtelnou stopu.
+
+Elektronový svazek je postupnì po øádcích vychylován po celé plo¹e stínítka. K~vytvoøení dojmu svícení celé obrazovky pøispívá jednak setrvaènost lidského oka, a také svìtelná setrvaènost (dosvit) luminoforu.
+
+Barevné obrazovky vytváøejí pro ka¾dou základní barvu (èervená, zelená, modrá) samostatný elektronový svazek, který dopadá na jinak obarvený luminofor. Pro správné zamìøení paprsku na luminofor je stínítko slo¾eno napø. z~úzkých svislých prou¾kù (obrazovka typu trinitron), kterými musí elektronové svazky projít. Pøi pozorování z~vìt¹í vzdálenosti pak dochází ke splynutí dílèích barevných bodù v~jeden obraz.
+
+\subsection{Rozklad obrazu na øádky a prokládané øádkování}
+Obraz je rozlo¾en urèitým poètem øádkù do jednoho snímku. Elektronový paprsek postupuje po stínítku plynulým rovnomìrným pohybem zleva doprava a vytváøí tak jednotlivé øádky. Tento dìj nazýváme \textit{horizontální èinný bìh}. Jakmile paprsek dorazí na pravý okraj obrazu, vrací se rychle zpìt (\textit{horizontální zpìtný bìh}).
+
+Pro jeden snímek je zvoleno tolik øádkù, aby struktura obrazu nebyla pøíli¹ hrubá. U~televizního pøenosu se snímek u~nejpou¾ívanìj¹í evropské soustavy PAL skládá z~625 øádkù. Jakmile paprsek vykreslí poslední øádek, vrací se ve \textit{snímkovém zpìtném bìhu} zdola zpìt vlevo nahoru.
+
+Poèet snímkù za jednu sekundu musí být zvolen tak, aby obraz neblikal. V~kinematografii  je rychlost posuvu filmu 24 obrázkù za sekundu, ale ka¾dý obrázek se promítá dvakrát, aby oko nerozeznalo dílèí vjem (blikání). V~televizi se zobrazuje 25 snímkù za sekundu a blikání se zamezuje slo¾ením ka¾dého snímku ze dvou pùlsnímkù zabírajících celou plochu stínítka obrazovky.
+
+Toto prokládání bylo zavedeno z~úsporných dùvodù. Kdyby se obraz uskuteèòoval pomocí 50 snímkù za sekundu a jeden snímek byl slo¾en z~625 øádkù, bylo by pro pøenos obrazu nutné vyu¾ít ¹íøku pásma 13 MHz. Rozdìlením obrazu na dva pùlsnímky lze ¹íøku pøená¹eného pásma sní¾it na polovinu (6 MHz).
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{img/prokladani.png}
+  \caption{Prokládané øádkování \cite{zakladyTV}}
+  \label{img:prokladani}
+\end{figure}
+
+Princip prokládaného øádkování je znázornìn na obrázku \ref{img:prokladani}. 625 øádkù je rozdìleno na dva pùlsnímky, z~nich¾ ka¾dý se rozprostírá pøes celou vý¹ku stínítka a ka¾dý má 312,5 øádkù. Obraz nebliká, proto¾e poèet pùlsnímkù je 50 za sekundu. Rozli¹ovací schopnost se témìø nezmen¹í, nebo» informace o~jasu se mezi dvìma pùlsnímky za 1/50 sekundy pøíli¹ nezmìní.
+
+\subsection{Televizor jako grafický výstup poèítaèe ZX Spectrum}
+V~pøedchozích kapitolách jsme se seznámili s~principem klasické televize. Nyní se podíváme, jak byla televize vyu¾ita poèítaèem ZX Spectrum k~zobrazování \cite{zxSpectrumULA}.
+
+Pro pou¾ití televize jako poèítaèového monitoru je nutné rozdìlit obrazovku na matici pixelù. U~normy PAL nemù¾e být poèet øádkù vy¹¹í ne¾ 625. Poèet sloupcù (¹íøka) není pøesnì dána. Závisí na rozli¹ovací pøesnosti elektronového svazku a stínítka. Aby byly pixely ve tvaru ètverce, mìla by ¹íøka odpovídat pomìru 4:3, co¾ je pomìr obrazu pùvodních televizí.
+
+Proto¾e televize nemá ¾ádnou pamì», vy¾aduje nepøetr¾itý proud dat, aby byl obraz stále viditelný. To musí zajistit buï CPU, které by tím ale spotøebovalo vìt¹inu svého strojového èasu, nebo speciální obvod, který autonomnì zaji¹»uje vykreslování. Jak ji¾ víme z~kapitoly \ref{sec:verzePocitaci}, u~poèítaèe ZX80 se o~vykreslování staralo CPU, u~dal¹ích ji¾ vykreslování obrazu zaji¹»oval speciální obvod v~ULA. V~obou pøípadech je v¹ak nutné mít obraz ulo¾en v~pamìti, kam má pøístup CPU i ULA.
+
+Pokud by byl øádek rozdìlen na 1000 pixelù, musel by do televize jít signál o~frekvenci 15,625 MHz. Pøi vykreslování pomocí CPU by musel procesor pracovat minimálnì na této frekvenci. Navíc mno¾ství pamìti, které by bylo nutné pou¾ít pro ulo¾ení, by bylo neúnosné. Pokud by napø. 1 pixel odpovídal 1 bitu, pak 1000 pixelù na øádku by vy¾adovalo 125 bajtù pamìti. Pøi plném vertikálním rozli¹ení televize s~pou¾itím 312 øádkù by ulo¾ení celé videopamìti vy¾adovalo cca 38K RAM. To je víc jak polovina adresovatelného prostoru 8-bitového CPU.
+
+Proto bylo nutné vymyslet jiné øe¹ení - sní¾ila se frekvence a zmen¹ila se velikost zobrazované èásti, okolo které je zobrazen okraj (viz obr. \ref{img:PALobraz}). ZX81 má rozli¹ení $256 × 192$ pixelù, ale kvùli limitované velikosti RAM (1 KB) je mo¾né zobrazovat pouze znaky, jejich¾ matice je ulo¾ena v~ROM. Obraz je tedy rozdìlený na $32×24$ znakù a nic jiného ne¾ tyto znaky není mo¾né zobrazit. Pro ulo¾ení ASCII hodnot celé obrazovky je vy¾adováno pouze 768 bajtù.
+
+\begin{figure}
+  \centering
+  \includegraphics{img/PALrozmery.png}
+  \caption{Rozmìry obrazu generovaného poèítaèem pro normu PAL \cite{zxSpectrumULA}}
+  \label{img:PALobraz}
+\end{figure}
+
+Poèítaèe ZX Spectrum zdìdily toto rozli¹ení, ale ka¾dému pixelu pøiøazují jeden bit. Pro ulo¾ení jednoho øádku je tedy vy¾adováno $256 ÷ 8 = 32$ bajtù. Pøi vertikálním rozli¹ení 192 øádkù je potøeba $32 × 192 = 6144$ bajtù pro ulo¾ení celého obrazu.
+
+Proto¾e PAL televize je slo¾ena z~625 prokládaných øádkù, které jsou rozdìleny sudé a liché snímky o~velikosti 312,5 øádkù, a ZX Spectrum má vertikální rozli¹ení 192 øádkù, zobrazují sudé i liché snímky stejný obraz.
+
+\subsection{Generování obrazu}\label{sec:grafika}
+
+Ji¾ víme, ¾e obraz má rozli¹ení $256×192$ pixelù, organizovaných jako virtuálních $32×24$ znakù. kde znak je 8 pixelù ¹iroký a 8 pixelù vysoký (1 bajt ¹iroký a 8 bajtù vysoký). Navíc je mo¾né pro ka¾dý znak nastavit barvu popøedí a barvu pozadí. Toto nastavení barev je aplikováno na celý znak. Pokud pracujeme pouze se znaky, je toto øe¹ení velice jednoduché a flexibilní. Pokud ale pracujeme na úrovni pixelù, dvì barvy na jednu buòku $8×8$ pixelù mù¾e být málo. Má to v¹ak i znaèné výhody. Generování grafiky procesorem je velice rychlé a ulo¾ený obraz zabírá jen cca 7 KB RAM. Díky tomu má programátor k~dispozici mnohem více u¾ivatelské pamìti. A~jak ji¾ dnes víme, i na ZX Spectrum lze programovat hry s~pìknou grafikou.
+
+Obrázek \ref{img:znaky} zobrazuje výøez èásti obrazu, ve kterém je vidìt rozdìlení obrazu na jednotlivé znaky o~velikosti $8×8$ pixelù a rùzné nastavení barev popøedí a pozadí u~ka¾dého znaku.
+
+\begin{figure}
+  \centering
+  \includegraphics{img/znaky.png}
+  \caption{Vztah bajtu, znaku a pixelù \cite{zxSpectrumULA}}
+  \label{img:znaky}
+\end{figure}
+
+Pøi zobrazování obrazu na obrazovku musí ULA neustále èíst z~pamìti dvojice bajtù. Jeden z~nich obsahuje bitovou informaci \uv{pixel svítí/nesvítí} (\textit{data}), druhý bajt (\textit{atribut}) obsahuje barvu rozsvícených a zhasnutých pixelù v~celém znaku. Kromì barvy je zde také ulo¾en pøíznak blikání znaku (\textit{flash}) a jas znaku (\textit{bright}). V~prùbìhu vykreslování tìchto 8 pixelù musí ULA zaèít naèítat následující dvojici, aby bylo mo¾né ihned zaèít vykreslovat následující znak.
+
+Význam jednotlivých bitù atributu je vysvìtlen v~tabulce \ref{tab:atributy}. Pokud má být daný pixel rozsvícen, jeho barva se urèí podle bitù 0 - 2 atributu. Pokud má být naopak pixel zhasnutý, jeho barva se urèí podle bitù 3 - 5 atributu. Tabulka \ref{tab:atribBarvy} ukazuje odpovídající barvu k~zadané binární hodnotì. Vidíme, ¾e pixel ve skuteènosti není rozsvícený/zhasnutý, ale pouze urèujeme, zda se má vykreslit barvou popøedí èi pozadí.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\multicolumn{1}{c}{7} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{5} & \multicolumn{1}{c}{4} & \multicolumn{1}{c}{3} & \multicolumn{1}{c}{2} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{0} \\ \hline
+FLASH & BRIGHT & PAP2 & PAP1 & PAP0 & INK2 & INK1 & INK0 \\ \hline
+\end{tabular}
+\caption{Pøidìlení významu jednotlivým bitùm atributù}
+\label{tab:atributy}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c||c|c|c||c|c|c|}
+\hline
+\multicolumn{2}{|c||}{} & \multicolumn{3}{c||}{PAPER} & \multicolumn{3}{c|}{INK} \\ \hline
+barva & è. & 5 & 4 & 3 & 2 & 1 & 0 \\ \hline\hline
+èerná & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline
+modrá & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\ \hline
+èervená & 2 & 0 & 1 & 0 & 0 & 1 & 0 \\ \hline
+fialová & 3 & 0 & 1 & 1 & 0 & 1 & 1 \\ \hline
+zelená & 4 & 1 & 0 & 0 & 1 & 0 & 0 \\ \hline
+sv. modrá & 5 & 1 & 0 & 1 & 1 & 0 & 1 \\ \hline
+¾lutá & 6 & 1 & 1 & 0 & 1 & 1 & 0 \\ \hline
+bílá & 7 & 1 & 1 & 1 & 1 & 1 & 1 \\ \hline
+\end{tabular}
+\caption{Význam bitù atributù PAPER a INK}
+\label{tab:atribBarvy}
+\end{table}
+
+V~tabulce \ref{tab:atribBarvy} vidíme pouze 8 barev, ZX Spectrum v¹ak zvládá a¾ 16 barev. U~ka¾dého znaku je toti¾ mo¾né nastavit, pomocí bitu BRIGHT v~jeho atributu, zda má znak normální nebo zvý¹ený jas. To v~podstatì pøidává dal¹ích 8 barev. Bohu¾el se v¹ak tento jas nastavuje spoleènì jak pro barvu popøedí, tak i pro barvu pozadí. Jeden znak tedy mù¾e mít pouze 8 barev, buï se zvý¹eným jasem, nebo se sní¾eným jasem.
+
+Poslední bit FLASH v~atributu povoluje/zakazuje blikání znaku. Pokud je FLASH nastaven do vysoké úrovnì, ULA invertuje sériový tok dat na výstupu (signál INK/PAPER) s~kmitoètem asi 3 Hz. V~podstatì se jedná pouze o~\uv{pøehazování} atributù INK a PAPER s~daným kmitoètem.
+
+Jak jsme ji¾ vidìli na obrázku \ref{img:PALobraz}, kolem celého obrazu je zobrazen okraj (border).  Ten mù¾e nabývat v¹ech 8 barev (tab. \ref{tab:atribBarvy}) s~normálním jasem. U~okraje není mo¾né nastavit vy¹¹í jas. Barva okraje je ulo¾ena ve speciálním registru v~bitech 0 a¾ 2. K~registru mu¾e CPU pøistupovat pomocí instrukce OUT 0xFE,A.
+
+\subsection{Struktura Video RAM}
+Nyní se podíváme, jakým zpùsobem je obraz ve video pamìti ulo¾en \cite{amaro89}. Z~kapitoly \ref{sec:RAMhier} ji¾ víme, ¾e Video RAM se nachází v~adresním prostoru 4000h - 7FFFh. Prvních 6912 bajtù obsahuje tzv. DISPLAY FILE (èást zobrazovaná TV pøijímaèem), zbytek obsahuje napø. systémové promìnné, které v¹ak pro nás v~tuto chvíli nejsou zajímavé.
+
+Dále ji¾ víme, ¾e obraz má rozmìr $256×192$ pixelù, který je rozdìlen na matici $32×24$ znakù o~velikosti $8×8$ pixelù. Ka¾dá osmice bodù na obrazovce má svoji pevnou fyzickou adresu ve Video RAM. Ka¾dému znaku (poli $8×8$ bodù) odpovídá jedna fyzická adresa atributu. Jejich vztah je znázornìn na obrázku \ref{img:videoadr}. Na obrázku \ref{img:tretiny} je znakové pole, zobrazované na TV pøijímaèi, s~rozdìlením do tøetin. Ka¾dý znak v~tomto poli je slo¾en z~osmi TV linek (pøebìhù paprsku).
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.8]{img/videoAdresy.png}
+  \caption{Vztah adres atributù k~adresám dat}
+  \label{img:videoadr}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{img/tretiny.png}
+  \caption{Rozdìlení obrazovky na znakové øádky a sloupce. $1/3$ obsazuje 2048 bajtù dat a 256 bajtù atributù. \cite{amaro89}}
+  \label{img:tretiny}
+\end{figure}
+
+Na první pohled se mù¾e zdát tato adresace nesmyslnì slo¾itá. Ve vztahu mezi adresami zobrazovaných dat a adresami atributù je ale urèitý systém. Znakové øádky jsou adresovány tak, jako kdyby v¾dy 8 øádkù \uv{le¾elo vedle sebe} (tj. 1 øádek o~256 znacích). Pak by adresace jednotlivých bytù dat vzestupnì narùstala \uv{po linkách} pøes pomyslné 3 øádky a¾ do konce DISPLAY FILE, vèetnì odpovídajících atributù.
+
+Toto rozlo¾ení adres dat a atributù bylo zvoleno zcela zámìrnì z~dùvodu snadné adresace atributù. Pøi zobrazování libovolného bajtu dat na obrazovce je nutné souèasnì znát i okam¾itý stav odpovídajícího atributu. Z~obrázku \ref{img:videoadr} vidíme, ¾e ke ka¾dému znaku, zobrazovanému na obrazovce, existuje atribut, který má spodní èást adresy (8 bitù) stejnou, jako 8 bajtù zobrazovaného znaku. Pou¾ité pamìti DRAM toti¾ mají øádkovou èást adresy (zapisované øídícím signálem RAS) ¹irokou 7 bitù. Pøi adresování se pak vyu¾ívalo stránkového módu, který vychází z~principu, ¾e adresy dat, které mají být èteny z~pamìti, mají spoleènou èást øádkové adresy. Pak staèí pouze jeden zápis øádkové adresy do pamìti a postupným zápisem sloupcových adres (øídícím signálem CAS) je mo¾no z~pamìti postupnì vybírat adresovaná data.
+
+
+\section{Klávesnice}\label{sec:klavesnice}
+
+V~poèítaèi ZX Spectrum je klávesnice typu QWERTY (obr. \ref{img:keybRozlozeni}), která je øe¹ena jako matice 40 spínaèù. Pokud bychom chtìli adresovat ka¾dé tlaèítko individuálnì, u~8-bitové datové sbìrnice by bylo nutné pou¾ít 5 vstupnì výstupních 8-bitových portù. Pro sní¾ení poètu vstupù je klávesnice zapojena do dvourozmìrné matice o~rozmìrech $5×8$. Obrázek \ref{img:keybZapojeni} ukazuje její konkrétní zapojení.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{img/keybRozlozeni.png}
+  \caption{Klávesnice ZX Spectrum \cite{emulatoryLinux}}
+  \label{img:keybRozlozeni}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=1.0]{img/keybZapojeni.png}
+  \caption{Zapojení klávesnice do matice a její pøipojení k~ULA \cite{zxSpectrumULA}}
+  \label{img:keybZapojeni}
+\end{figure}
+
+Sloupce matice jsou pøipojeny k~horním 8 bitùm adresové sbìrnice A8 a¾ A15. Øádky matice jsou pøipojeny k~obvodu ULA, který zprostøedkovává styk s~CPU. Øádky jsou navíc pomocí odporù 10K pøipojeny k~napájecímu napìtí 5V a je na nich tedy log. 1.
+
+Proto¾e jsou tlaèítka zapojena do matice, je nutné jejich stav èíst softwarovì pomocí tzv. multiplexování. Procesor nejprve na adresovou sbìrnici vystaví adresu sloupce, jeho¾ stav chce zjistit. Sloupec, jeho¾ hodnota nás zajímá, musí být nastaven do log. 0, ostatní sloupce jsou nastaveny do log. 1. Procesor poté pøeète stav na datové sbìrnici, která je pomocí ULA pøipojena k~øádkùm matice. Pokud byla stisknuta nìjaká klávesa v~adresovaném sloupci (který má hodnotu log. 0, tedy GND), dojde k~uzemnìní odpovídajícího øádku (na kterém pùvodnì byla log. 1, tedy 5V) a øádek se pro procesor jeví jako log. 0 v~odpovídajícím bitu datové sbìrnice. Ostatní bity datové sbìrnice mají hodnotu log. 1.
+
+Vidíme, ¾e v~jednom ètení procesoru lze zjistit stav pouze jednoho sloupce. Pro pøeètení celé klávesnice je nutné postupnì zkontrolovat v¹ech 8 sloupcù matice klávesnice. Tabulka \ref{tab:klavesnice} ukazuje horní èást adresové sbìrnice, kterou je potøeba nastavit pro ètení odpovídajícího sloupce.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  {\bf Klávesy} & {\bf Horních 8 bitù adresy} & {\bf Nastavená adresová linka} & {\bf A15 - A8}\\ \hline\hline
+  B - SPACE & 0x7F & A15 & 01111111 \\ \hline
+  H - ENTER & 0xBF & A14 & 10111111 \\ \hline
+  Y - P & 0xDF & A13 & 11011111 \\ \hline
+  6 - 0 & 0xEF & A12 & 11101111 \\ \hline
+  1 - 5 & 0xF7 & A11 & 11110111 \\ \hline
+  Q - T & 0xFB & A10 & 11111011 \\ \hline
+  A~- G & 0xFD & A9 & 11111101 \\ \hline
+  CAPS - V~& 0xFE & A8 & 11111110 \\ \hline
+\end{tabular}
+\caption{Horní èást I/O adresy procesoru pro ètení stavu kláves}
+\label{tab:klavesnice}
+\end{table}
+
+Ji¾ víme, ¾e øádky matice klávesnice (data) jsou k~procesoru pøipojeny pøes ULA. ULA toti¾ slou¾í jako adresový dekodér. Pokud procesor pøi ètení pomocí I/O instrukce vystaví na spodní èást adresové sbìrnice A0 - A7 hodnotu 0xFE, ULA pøipojí øádky matice klávesnice (data) na datovou sbìrnici. V~opaèném pøípadì je klávesnice od sbìrnice odpojená. Klávesnice ve skuteènosti není adresovaná celou osmibitovou hodnotu 0xFE, ale pouze nultým bitem adresy (A0) ve stavu log. 0. Díky tomuto øe¹ení nebylo v~ULA nutné implementovat celý 8-bitový komparátor adresy, ale pouze jednobitový. Na druhou stranu v¹ak ztrácíme polovinu adresového prostoru, který ji¾ nemù¾e být k~nièemu jinému pou¾it.
+
+Softwarová obsluha klávesnice vyu¾ívá vlastnosti procesoru Z80, která spoèívá v~tom, ¾e pøi vykonávání vstupní instrukce \texttt{IN A,adr} se na horní polovinì adresové sbìrnice A8 a¾ A15 objeví hodnota v~registru \texttt{A}, na spodní polovinì adresy A0 a¾ A7 se objeví hodnota \texttt{adr}. Správnou hodnotu v~registru \texttt{A} (viz tab. \ref{tab:klavesnice}) tedy procesor vybere po¾adovaný sloupec, hodnotou adr=0xFE je klávesnice adresována a následnì pøipojena k~datové sbìrnici, procesor pøeète stav v~adresovaném sloupci klávesnice a ulo¾í ho zpìt do registru A. Tuto akci je nutné provést postupnì pro v¹ech 8 sloupcù klávesnice.
+
+\section{Dal¹í I/O rozhraní}\label{sec:archIO}
+
+Nyní se ve struènosti podíváme na dal¹í I/O rozhraní, která jsou internì zabudovaná v~ZX Spectrum. Ve¹kerá tato I/O rozhraní jsou mapována na port 0xFE, o~kterém jsme ji¾ mluvili v~souvislosti s~klávesnicí. Tento port má v¹ak odli¹né chování pro zápis a pro ètení.
+
+Pøi ètení z~portu 0xFE pomocí instrukce IN je v~bitech D0 - D4 hodnota naètená z~klávesnice (viz kapitola \ref{sec:klavesnice}). Bit D6 slou¾í k~nahrávání dat z~magnetofonu do poèítaèe. Signál, který byl zaznamenaný na magnetofonovou pásku, se snímá, zesiluje a pøivádí na bit D6. Naèítání dat z~magnetofonu se provádí softwarovì. CPU vzorkuje tento vstupní bit, sestavuje z~nìj bajty a ty následnì zpracovává a ukládá do pamìti.
+
+Zápis na port 0xFE pomocí instrukce OUT má odli¹né chování. V~kapitole \label{sec:grafika} jsme ji¾ øekli, ¾e v~bitech D0 a¾ D2 je ulo¾ena barva okraje obrazovky. Bit D3 slou¾í jako výstup z~poèítaèe do magnetofonu. Procesor softwarovì generuje zvukový signál pro magnetofon a postupnì bit po bitu ukládá zapisovaná data na pásku. Bit D4 slou¾í pro ovládání reproduktoru. Zvuk se generuje softwarovì tak, ¾e procesor postupnì støídá logickou hodnotu 0 a 1. Doba mezi pøepnutím logické hodnoty mìní frekvenci tónu.
+
+Jak ji¾ bylo øeèeno v~pøedchozích kapitolách, port 0xFE je ve skuteènosti dekódován pouze pomocí hodnoty log. 0 v~nultém bitu adresy. Tyto periferie proto lze adresovat celkem 127 rùznými adresami, napø 0x00, 0x10 apod. Dùraznì je v¹ak doporuèováno pou¾ívat pouze adresu 0xFE, aby nedocházelo k~pøípadným kolizím na sbìrnici pøi pou¾ití externích periferií.
+
+
+%==============================================================================
+\chapter{Návrh emulátoru poèítaèe ZX Spectrum}\label{ch:navrh}
+
+V~této kapitole probereme mùj návrh emulátoru poèítaèe ZX Spectrum. Vzhledem k~tomu, ¾e chci celý emulátor implementovat pomocí technologie FPGA, struènì si tuto technologii popí¹eme v~kapitole \ref{sec:FPGA}. Kapitola \ref{sec:FITkit} pøedstaví platformu FITkit, na které chci emulátor vyvíjet a otestovat. V~kapitole \ref{sec:navrh} se ji¾ podíváme na konkrétní návrh celého emulátoru.
+
+\section{FPGA technologie}\label{sec:FPGA}
+
+\cite{FPGAtut} Field-Programmable Gate Array (FPGA) je speciální èíslicový integrovaný obvod, který je slo¾en z~mnoha malých konfigurovatelných logických blokù (CLB), které jsou vzájemnì propojeny pomocí propojovací sítì. Pomocí speciálního konfiguraèního øetìzce lze libovolnì mìnit chování konfigurovatelných logických blokù a takté¾ je mo¾né libovolnì mìnit jejich propojení.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.4]{img/fpga_arch.png}
+  \caption{Základní struktura FPGA obvodu \cite{FPGAtut}}
+  \label{img:fpgaArch}
+\end{figure}
+
+U~klasických ASIC (Application-Specific Integrated Circuit) obvodù je jejich funkce (vnitøní zapojení) dána ji¾ pøi výrobì a nelze ji ji¾ nijak zmìnit. FPGA je oproti tomu univerzální architektura, její¾ vnitøní propojení a chování lze libovolnì mìnit i po výrobì. Daní za tuto flexibilitu je mnohem vìt¹í slo¾itost obvodu, vy¹¹í spotøeba a ni¾¹í rychlost, ne¾ u~ASIC obvodu.
+
+Obrázek \ref{img:fpgaArch} ukazuje základní strukturu FPGA obvodu. Vidíme, ¾e FPGA je slo¾eno z~matice programovatelných logických blokù (CLB), které jsou vzájemnì propojeny pomocí konfigurovatelné propojovací sítì. Dále se v~FPGA nacházejí IOB (Input/Output Block), které jsou pøipojeny k~I/O pinùm na pouzdru a slou¾í pro pøipojení FPGA k~okolnímu prostøedí (pøevádí logické úrovnì apod.). Souèástí FPGA mohou být i dal¹í vestavìné speciální bloky, jako napø. HW násobièky, BRAM pamìti, bloky pro správu hodin (DCM) apod. Proto¾e jsou v¹echny tyto bloky vèetnì propojovací sítì konfigurovatelné, je také nutné nìkde uchovávat jejich konfiguraci. K~tomu slou¾í konfiguraèní pamì». 
+
+
+
+Nejvìt¹ím problémem FPGA je zøejmì její prostorová slo¾itost. A¾ 80\% plochy èipu toti¾ zabírá propojovací sí». Dal¹í velkou èást plochy zabírá konfiguraèní pamì». Samotná logika zabírá pouze jednotky procent z~celého èipu. Velice zjednodu¹enì lze vyjádøit vztah obsazené plochy touto rovnicí \cite{FPGAtut}: $P_{propojovaciSit} \approx 10 \cdot P_{konfiguracniPamet} \approx 100 \cdot P_{logika}$
+
+Struktura konfigurovatelného logického bloku (CLB) je na obrázku \ref{img:fpgaClb}. Je slo¾en z~nìkolika (napø. 2) SLICE blokù, co¾ jsou men¹í logické buòky, mezi kterými je rychlé propojení a \uv{carry øetìzce} pro konstrukci rychlých sèítaèek, násobièek apod.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.4]{img/fpga_clb.png}
+  \caption{Struktura konfiguraèního logického bloku (CLB) v~FPGA Xilinx XC4000 \cite{FPGAtut}}
+  \label{img:fpgaClb}
+\end{figure}
+
+SLICE je zalo¾en na tzv. look-up tabulce (LUT), co¾ je malá pamì» o~datové ¹íøce jeden bit. Její adresová sbìrnice má obvykle ¹íøku 4 a¾ 6 bitù. Oznaèíme-li ¹íøku adresové sbìrnice LUT tabulky neznámou $k$, lze velikost pamìti vyjádøit vztahem $2^k × 1$ bitù. Pomocí LUT tabulky lze realizovat libovolnou $k$ bitovou logickou funkci. Kromì LUT tabulky navíc SLICE obsahuje také registr pro ulo¾ení libovolné hodnoty, multiplexory a \uv{carry øetìzec}.
+
+
+\section{Platforma FITkit}\label{sec:FITkit}
+
+FITkit \cite{FITkit} je vývojový kit, který vznikl na Fakultì informaèních technologií Vysokého uèení technického v~Brnì. Cílem tohoto kitu je umo¾nit studentùm, aby mohli navrhovat a prakticky realizovat nejen softwarové, ale také hardwarové projekty èi dokonce celé aplikace.
+
+Platforma FITkit obsahuje výkonný mikrokontrolér s~nízkým pøíkonem, hradlové pole FPGA a øadu periferií. Dùle¾itým prvkem FITkitu je právì hradlové pole, které studentùm umo¾òuje pokroèilý návrh a implementaci hardwarových zaøízení.
+
+V~souèasné dobì existují tøi verze FITkitu: 1.0, 1.2 a 2.0. K~implementaci emulátoru vyu¾iji FITkit 2.0 ve vylep¹ené verzi, který oproti klasickým verzím 2.0 obsahuje mnohem vìt¹í FPGA. Konkrétní hardwarové parametry pou¾itého FITkitu jsou:
+
+\begin{itemize}
+\item MCU Texas Instruments MSP430F2617
+\item FPGA Xilinx Spartan 3 XC3S400-4PQ208C (400 000 hradel, 896 CLB)
+\item SDRAM $8×8$ Mbit
+\item USB pøevodník FT2232C
+\item audio rozhraní a kodek TLV320AIC23B
+\item 2 rozhraní PS/2
+\item rozhraní VGA
+\item rozhraní RS232
+\item maticová klávesnice $4×4$
+\item øádkový LCD displej
+\item roz¹iøující konektory
+\end{itemize}
+
+Centrem celého FITkitu je FPGA. K~nìmu je pøipojen MCU, SDRAM i ve¹keré rozhraní. Pokud chce napø. MCU komunikovat s~PS/2 rozhraním, je nutné v~FPGA implementovat øadiè a propojit MCU s~tímto øadièem. Pro komunikaci mezi FPGA a MCU je v~knihovnì implementován SPI komunikaèní systém, který umo¾òuje adresování libovolných komponent. Souèástí knihovny je napø. také VHDL implementace øadièe PS/2 a VGA rozhraní a SDRAM pamìti.
+
+V~tuto chvíli nebudeme zabíhat do podrobnìj¹ích detailù. Ve¹keré detailní informace o~FITkitu ètenáø nalezne v~\cite{FITkit}.
+
+\section{Návrh architektury emulátoru ZX Spectrum}\label{sec:navrh}
+
+Ji¾ jsme se seznámili s~technologií FPGA i platformou FITkit, kterou jsem se rozhodl pou¾ít pro prvotní návrh a implementaci mého emulátoru poèítaèe ZX Spectrum. Tato kapitola pojednává o~návrhu celého emulátoru.
+
+Zadání této práce po¾aduje konstrukci emulátoru poèítaèe ZX Spectrum 48K. Rozhodl jsem se, ¾e si zadání roz¹íøím a implementuji emulátor poèítaèe ZX Spectrum 128K. Ten vychází z~pùvodního modelu, ale pøiná¹í øadu vylep¹ení. Z~poèátku tedy budu vyvíjet verzi 48K, po jejím odladìní jí roz¹íøím na verzi 128K.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{img/navrhBlok.png}
+  \caption{Blokové schéma emulátoru}
+  \label{img:navrhBlok}
+\end{figure}
+
+Obrázek \ref{img:navrhBlok} ukazuje blokové schéma emulátoru. Vidíme, ¾e centrem celého zaøízení je FPGA, ke kterému jsou pøipojeny v¹echny ostatní periferie. Takto tomu je i v~pou¾itém FITkitu (viz kap. \ref{sec:FITkit}).
+
+\subsection{Procesor}\label{nav:t80}
+
+\uv{Mozkem} poèítaèe je procesor. Víme, ¾e v~ZX Spectrum je pou¾it 8-bitový procesor Z80 od firmy Zilog. Proto¾e chci vytvoøit emulátor co nejmen¹í a nejjednodu¹¹í, rozhodl jsem se, ¾e nepou¾iji skuteèný procesor Z80 jako¾to samostatný integrovaný obvod pøipojený k~FPGA, ale implementuji jeho jádro pøímo v~FPGA.
+
+Na internetu \cite{T80} se nachází otevøená implementace procesoru Z80 v~jazyce VHDL pod názvem T80. Kromì jádra procesoru Z80 tento projekt podporuje také jádro 8080 (proto¾e Z80 je jeho vylep¹ená modifikace, viz kap. \ref{sec:Z80}) a navíc také modifikovanou instrukèní sadu, která je pou¾ita v~konzoli GameBoy.
+
+\subsection{Pamì»}
+
+V~kapitole \ref{sec:RAMhier} byla detailnì popsána pamì»ová hierarchie v~poèítaèi ZX Spectrum 48K a 128K. Víme, ¾e v~pamìti ROM je ulo¾en interpret jazyka BASIC a zbytek pamì»ového prostoru zabírá pamì» RAM, která má velikost 48KB respektive 128KB.
+
+V~poèítaèi je navíc je¹tì oddìlená klasická RAM a Video RAM, ze které ULA vykresluje obraz na obrazovku. Oddìlená je proto, aby procesor nebyl zdr¾ován obvodem ULA, pokud pracuje s~jinou èástí RAM, ne¾ s~Video RAM.
+
+Proto¾e na FITkitu je osazena pamì» SDRAM o~velikosti 8 MB, která má mnohem vy¹¹í kapacitu a také je mnohem rychlej¹í, ne¾ pùvodní pamìti, rozhodl jsem se, ¾e tuto pamì» pou¾iji jak pro normální RAM, tak i pro Video RAM. Abych celý emulátor je¹tì více zjednodu¹il, nahradím i pùvodní pamì» ROM touto SDRAM. Díky tomuto øe¹ení bude celý adresní prostor poèítaèe pracovat pouze s~pamìtí SDRAM, která je pøítomna na FITkitu.
+
+Proto¾e ale obsah ROM (BASIC) musí být nìkde ulo¾en, vyu¾iji k~jeho ulo¾ení MCU, který k~tomu má dostateènì velkou Flash pamì». Po zapnutí FITkitu MCU pøekopíruje obsah pamìti ROM do pamìti SDRAM a spustí vykonávání programu procesorem Z80 v~FPGA.
+
+\subsection{SD/MMC karta}
+
+Dal¹í velice dùle¾itou periferií poèítaèe ZX Spectrum bylo magnetofonové rozhraní, pomocí kterého se nahrávaly a ukládaly programy. Toto øe¹ení se bohu¾el neukázalo býti pøíli¹ spolehlivé. Èasto se stávalo, ¾e ulo¾ený záznam na pásce se podaøilo naèíst a¾ na nìkolikátý pokus, v~nejhor¹ím pøípadì vùbec. Dal¹ím nevýhodou byla pøíli¹ dlouhá doba nahrávání/ukládání programu z~kazety. Jednalo se øádovì o~minuty, u~vìt¹ích aplikací a¾ desítky minut. Pokud navíc bìhem nahrávání do¹lo k~chybì, bylo o~zábavu postaráno.
+
+Z~toho dùvodu jsem se rozhodl, ¾e magnetofon nebudu emulovat vùbec a místo nìj vytvoøím svoje speciální rozhraní pro práci s~SD/MMC kartami. Vzhledem k~tomu, ¾e tyto pamì»ové karty pracují s~napájecím napìtím 3.3V (stejnì jako FPGA a MCU) a pou¾ívají ke komunikaci klasické SPI rozhraní, lze pamì»ovou kartu pøímo pøipojit k~FPGA pøes externí konektor na FITkitu.
+
+Náhrada magnetofonu za SD kartu má v¹ak i nevýhodu. Rutina pro práci s~magnetofonem byla pøímo souèástí BASICu. Staèilo v~nìm napsat pøíkaz \uv{LOAD}, zapnout magnetofon a aplikace se zaèala naèítat. Pøi pou¾ití SD karty ale nic takového nebude mo¾né pou¾ít, proto¾e pamì»ová karta pou¾ívá souborový systém (vìt¹inou FAT32) a rutina pro její obsluhu je pøíli¹ slo¾itá a velká, ne¾ aby se ve¹la do standardní ROM.
+
+Z~tohoto dùvodu je nutné naprogramovat speciální obslu¾nou aplikaci (buï ve formì kompletní ROM, nebo jako obyèejná spustitelná aplikace), která bude umìt komunikovat s~SD/MMC kartou, procházet souborový systém na kartì a zavádìt z~ní aplikace do pamìti.
+
+\subsection{Dal¹í vstupní a výstupní periferie}
+
+Originální ZX Spectrum pou¾ívá jako zobrazovací výstup televizor. Já jsem se rozhodl pou¾ít klasický poèítaèový monitor, který se k~mému emulátoru pøipojí pomocí standardního VGA rozhraní. V~dne¹ní dobì je sice toto rozhraní nahrazováno digitálním rozhraním jako je DVI nebo HDMI, ale pro svou jednoduchost a dostupnost na FITkitu jsem se pøesto rozhodl pou¾ít VGA. Souèástí knihovny FITkit je navíc ji¾ implementovaný øadiè, který tím pádem mohu s~výhodou pou¾ít.
+
+Standardním vstupem poèítaèe ZX Spectrum je speciální zabudovaná klávesnice. Tu nahradím klasickou poèítaèovou klávesnicí s~rozhraním PS/2, které je opìt pøítomné na FITkitu vèetnì jeho øadièe implementovaného v~knihovnì FITkitu.
+
+Postupem èasu vzniklo pro poèítaè ZX Spectrum také nìkolik druhù my¹í, které jsou nìkterými aplikacemi podporovány. Jsou to pøedev¹ím Kempston Mouse a Amiga Mouse. Princip pøipojení k~poèítaèi a jejich ovládání se li¹í. Vzhledem k~tomu, ¾e na FITkitu jsou celkem dvì rozhraní PS/2, vyu¾iji druhý konektor právì pro pøipojení klasické poèítaèové PS/2 my¹i, která bude emulovat jeden (pøípadnì více) druhù pùvodních my¹í.
+
+V~kapitole \ref{sec:archIO} byl popsán integrovaný reproduktor, který slou¾í pro generování jednoduchých tónù. Na FITkitu se nachází jednoduchý piezo-reproduktor, kterým nahradím pùvodní reproduktor. V~pøípadì potøeby je také mo¾né k~FITkitu, pomocí externího rozhraní, pøipojit externí reproduktor.
+
+%==============================================================================
+\chapter{Hardwarové øe¹ení}\label{ch:hwreseni}
+
+Tato kapitola popisuje moje øe¹ení emulátoru z~pohledu hardware. Celý emulátor je realizován pomocí FPGA s~pou¾itím jazyka VHDL. Pro lep¹í pochopení øe¹eného problému proto budu pou¾ívat ukázky VHDL kódu.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.6]{img/arch_impl.png}
+  \caption{Architektura emulátoru ZX Simi}
+  \label{img:implBlok}
+\end{figure}
+
+Obrázek \ref{img:implBlok} zjednodu¹enì ukazuje princip propojení jednotlivých komponent emulátoru. Ji¾ víme, ¾e procesor Z80 rozli¹uje pamì»ový adresový prostor a I/O adresový prostor. Oba prostory proto pou¾ívají oddìlenou sbìrnici. K~pamì»ové sbìrnici je pøipojena SDRAM pamì», procesor T80 a grafická jednotka (GPU), která ète data z~pamìti a vykresluje je na obrazovku. Poslední komponentou, která pøistupuje k~pamìti, je mùj vlastní DMA øadiè. Plní velice významnou funkci, která bude vysvìtlena v~kapitole \ref{sec:hwsmdma}. K~I/O sbìrnici je pøipojen procesor, klávesnice, my¹, øadiè SD/MMC karet a opìt mùj DMA øadiè.
+
+V~následujících kapitolách budou detailnì vysvìtleny v¹echny zmínìné komponenty.
+
+
+
+
+\section{PS/2 øadiè}\label{sec:ps2}
+Rozhraní PS/2 vniklo ve firmì IBM v~pozdìj¹ích 80 letech. Svùj název získalo podle série poèítaèù IBM Personal System/2. Od té doby se rozhraní ¹iroce roz¹íøilo a pou¾ívá se dodnes. Slou¾í pro pøipojení klávesnice, my¹i, tabletu, touchpadu, trackpointu a podobných periferií. V~souèasné dobì je pomalu nahrazováno univerzálnìj¹í sbìrnicí USB, ale pøesto je stále velice populární a roz¹íøené.
+
+Implementace øadièe PS/2 je souèástí knihovny FITkit \cite{FITkit} a proto zde nebudu jeho konkrétní implementaci popisovat. Pøesto pova¾uji za nutné seznámit ètenáøe alespoò s~jeho rozhraním.
+
+\begin{verbatim}
+entity PS2_controller is
+    port ( 
+        RST     : in   std_logic;
+        CLK     : in   std_logic;
+        -- Rozhrani PS/2
+        PS2_CLK  : inout std_logic;
+        PS2_DATA : inout std_logic;
+        -- Vstup (zapis do zarizeni)
+        DATA_IN  : in  std_logic_vector(7 downto 0); 
+        WRITE_EN : in  std_logic;
+        -- Vystup (cteni ze zarizeni)
+        DATA_OUT : out  std_logic_vector(7 downto 0); 
+        DATA_VLD : out  std_logic;
+        DATA_ERR : out  std_logic
+    );
+end entity;
+\end{verbatim}
+
+Signály \texttt{PS2\_CLK} a \texttt{PS2\_DATA} slou¾í pro komunikaci pomocí PS/2 protokolu s~externím zaøízením (klávesnice, my¹). Jedná se o~synchronní obousmìrný protokol master-slave. Hodinový signál v¾dy generuje slave (napø. klávesnice). Master (napø. PC) je v¹ak nadøazen a má mo¾nost komunikaci zakázat nebo pozastavit.
+
+Pøi komunikaci slave-master se pøijatá data objeví na osmibitové sbìrnici \texttt{DATA\_OUT} a jejich platnost je signalizována bitem \texttt{DATA\_VLD}.
+
+Pøi komunikaci master-slave je nutné na osmibitovou sbìrnici \texttt{DATA\_IN} pøivést odesílaná data a zápis potvrdit signálem \texttt{WRITE\_EN}.
+
+
+
+
+\section{Klávesnice}
+V kapitole \ref{sec:klavesnice} byl popsán princip a zapojení klávesnice v poèítaèi ZX Spectrum. Nyní se podívejme na implementaci rozhraní klávesnice v mém emulátoru. Entita klávesnice je následující:
+
+\begin{verbatim}
+entity KEYBOARD is
+    port (
+        CLK             : in  std_logic;
+        RESET           : in  std_logic;
+        -- rozhrani pro komunikaci s~procesorem
+        ADDR            : in  std_logic_vector(15 downto 0);
+        DATA_OUT        : out std_logic_vector(7 downto 0);
+        -- rozhrani pro komunikaci s~PS2 klavesnici pripojenou k~FPGA
+        K_CLK           : inout std_logic;
+        K_DATA          : inout std_logic
+    );
+end entity;
+\end{verbatim}
+
+Souèástí architektury KEYBOARD je i PS/2 øadiè (viz kap. \ref{sec:ps2}). Signály \texttt{K\_CLK} a \texttt{K\_DATA} vystupují z~PS/2 øadièe a jsou pøivedeny na I/O piny FPGA. Slou¾í ke komunikaci s~PS/2 klávesnicí.
+
+Procesor periodicky ète stav klávesnice pomocí I/O instrukce. Sbìrnice \texttt{ADDR} (konkrétnì bity 15 a¾ 8) je pøímo pøipojena k~adresové sbìrnici procesoru a procesor pomocí ní adresuje konkrétní sloupec klávesnice. Obrázek \ref{img:keybZapojeni} ukazuje reálné zapojení v~poèítaèi ZX Spectrum. Na sbìrnici \texttt{DATA\_OUT} je nutné vystavit stav stisknutých kláves ve sloupci, který procesor adresuje.
+
+Adresace sloupce se provádí neustále, a to i v~pøípadì, kdy procesor ve skuteènosti nechce klávesnici adresovat. Na sbìrnici \texttt{DATA\_OUT} se proto neustále objevují nìjaké hodnoty. Pøipojení a odpojení sbìrnice \texttt{DATA\_OUT} k~procesoru se øe¹í a¾ vnì této architektury.
+
+Pøi ka¾dém pøijetí stisknuté klávesy od klávesnice je nastavena log. 0 do odpovídající pozice v~registrovém poli \texttt{signal keys : reg5x8;}. Klávesy v~poli jsou seøazeny stejnì jako na obr. \ref{img:keybZapojeni}. Pokud je od klávesnice naopak pøijat pøíznak uvolnìné klávesy, je v~poli \texttt{keys} nastavena na odpovídající pozici hodnota log. 1. Ka¾dá klávesa má tedy v~poli svùj vlastní bit, který udává, zda je klávesa stisknuta (log. 0) èi nikoliv (log. 1).
+
+Klávesnice ZX Spectrum obsahuje pouze klávesy A-Z, 0-9, ENTER, SPACE, CAPS SHIFT a SYMBOL SHIFT. Klasická klávesnice má v¹ak kláves mnohem více a byla by ¹koda je nevyu¾ít. Konkrétnì se jedná o~¹ipky, celý numerický blok, teèka, èárka a backspace. Ka¾dá z~tìchto kláves má svùj jednobitový registr, který opìt indikuje stav klávesy. Z~tìchto registrù je pomocí kombinaèní logiky vytvoøena maska, která má také rozmìr pole $5 × 8$ bitù (stejnì jako pole \texttt{keys}). Jednotlivé bity kláves jsou v~masce rozmístìny tak, aby odpovídaly skuteènému zapojení v~poèítaèi ZX Spectrum. Na obrázku \ref{img:keybRozlozeni} napøíklad vidíme, ¾e ¹ipka nahoru sdílí stejnou klávesu, jako klávesa 7. Jako ¹ipka nahoru je to chápáno pouze v~pøípadì, ¾e u¾ivatel dr¾í souèasnì stisknutou klávesu CAPS SHIFT.
+
+Maska je tedy zapojena tak, ¾e pokud u¾ivatel stiskne kurzorovou ¹ipku nahoru, v~masce se nastaví log. 0 na pozici klávesy 7 a na pozici klávesy CAPS SHIFT. Podobným zpùsobem jsou vyøe¹eny i ostatní speciální klávesy. 
+
+S~maskou a polem \texttt{keys} je proveden logický souèin. Podle horních osmi bitù adresy \texttt{ADDR} je na výstup \texttt{DATA\_OUT} pøipojen jeden z~osmi øádkù výsledku logického souèinu masky a pole \texttt{keys}, pøièem¾ zbylé tøi datové bity jsou doplnìny jednièkami. Konkrétní øádek je vybrán logickou nulou v~adrese, zbylé bity adresy musí mít log. 1. Principiálnì je tedy \texttt{ADDR} pøiveden na dekodér 1 z~8 a výstup z~dekodéru je pøiveden na multiplexor, který na výstup pøepíná konkrétní øádek z~výsledného pole stisknutých kláves.
+
+
+
+
+\section{My¹}
+My¹ není standardní souèástí poèítaèe ZX Spectrum. Zaèaly se vyrábìt a¾ v~pozdìj¹ích letech a vzniklo hned nìkolik rùzných standardù, které bohu¾el nejsou navzájem kompatibilní. Jejich dal¹í nevýhodou je, ¾e obslu¾né rutiny nejsou ulo¾eny v~pamìti ROM, tak¾e pokud chce programátor ve své aplikaci my¹ pou¾ívat, musí si sám naprogramovat i obslu¾né rutiny. I~pøesto v¹ak vzniklo mnoho aplikací, ve kterých jsou my¹i vyu¾ívány a proto jsem se i já rozhodl, ¾e budu my¹ ve svém emulátoru podporovat.
+
+Nyní si struènì pøedstavíme jednotlivé standardy my¹í pro poèítaè ZX Spectrum \cite{cygnusMysi, KMouseTurbo}:
+\begin{itemize}
+\item\textbf{Amiga Mouse} - Zásadní nevýhodou je obrovské zatí¾ení procesoru, proto¾e my¹ je potøeba obsluhovat zcela kompletnì programovì. Pro dal¹í èinnost (kromì obsluhy my¹i) zbývá cca $50\%$ výkonu procesoru, pokud má být pohyb kurzoru opravdu plynulý. Pøesto se my¹ velice roz¹íøila. K poèítaèi ZX Spectrum se pøipojuje pomocí paralelního portu UR-4  \cite{cygnusUR4} a ve své podstatì je tedy paralelní, proto¾e pou¾ívá 4 vodièe pro pøenos pulzù ze ètyø enkodérù a dal¹í tøi vodièe pro pøenos stavu tlaèítek. Nároènost obsluhy souvisí právì s~ètením stavu enkodérù, které se musí provádìt velice èasto, aby my¹ byla plynulá a nevynechávala.
+\item\textbf{Atari Mouse} - My¹ je svým chováním identická s~Amiga Mouse. Li¹í se pouze zapojením konektoru.
+\item\textbf{AMX Mouse} - Tato my¹ se pøipojuje do systémové sbìrnice, na které generuje IM2 pøeru¹ení \cite{z80userManual} a na datovou sbìrnici vystavuje smìr pohybu my¹i. Bohu¾el má velice slabou softwarovou podporu.
+\item\textbf{Kempston Mouse} - popis v~kapitole \ref{sec:kempstonMouse}
+\item\textbf{Ostatní} - Existuje je¹tì mnoho dal¹ích standardù, vìt¹inou se jedná o~rùzné my¹i z~Ruska, jejich¾ podpora je naprosto mizivá a nebudu je zde proto popisovat. Zmiòme napø.: GEOS Mouse a AY Mouse.
+\end{itemize}
+
+\subsection{Komunikaèní protokol PS/2 my¹i}\label{sec:mouseProtocol}
+Tato kapitola je zpracována podle \cite{PS2mouse}. Samotné rozhraní PS/2 bylo popsáno v~kapitole \ref{sec:ps2}. Nyní se podíváme na komunikaèní protokol, který PS/2 my¹i pou¾ívají.
+
+Standardní my¹ má dva 9-bitové èítaèe v~doplòkovém kódu, které poèítají posun my¹i v~ose X a ose Y. Ka¾dý èítaè má navíc je¹tì pøíznak pøeteèení. Obsah tìchto èítaèù spoleènì se stavem tøí tlaèítek je zasílán hostu ve formì tøí-bajtového paketu. Hodnota èítaèù reprezentuje relativní zmìnu polohy zaøízení od pøedchozího odeslání paketu. Pøi ka¾dém odeslání je obsah tìchto registrù vynulován. Tabulka \ref{tab:mysDataPacket} ukazuje strukturu standardního paketu, který je odesílán hostiteli.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+ & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0\\ \hline\hline
+1. bajt & pøeteè. Y  & pøeteè. X & znam. Y & znam. X & 1 & prostø. tl. & pravé tl. & levé tl.\\ \hline
+2. bajt & \multicolumn{8}{|c|}{posun v~ose X}\\ \hline
+3. bajt & \multicolumn{8}{|c|}{posun v~ose Y}\\ \hline
+\end{tabular}
+\caption{Standardní datový paket polohy a stavu tlaèítek my¹i}
+\label{tab:mysDataPacket}
+\end{table}
+
+My¹ umí pracovat v~nìkolika mo¾ných re¾imech:
+
+\begin{itemize}
+\item{\textbf{Reset mode}} - Do tohoto re¾imu se my¹ dostane po zapnutí, nebo pøi pøijetí pøíkazu \uv{Reset} (0xFF). My¹ pøi vstupu do tohoto re¾imu provede tzv. BAT diagnostiku (Basic Assurance Test) a nastavení výchozí parametry: vzorkovací frekvence (100/sekundu), rozli¹ení (4/mm), ¹kálování (1:1) a zasílání dat (vypnuto).
+
+Následnì my¹ ode¹le hostiteli kód 0xAA (BAT successful) nebo 0xFC (Error). Poté my¹ ode¹le svoje ID s~hodnotou 0x00. Tím se li¹í od klávesnice a nestandardních my¹í, které mají své ID rùzné od 0. Po tomto kroku my¹ pøejde do re¾imu \uv{Stream mode}.
+
+\item{\textbf{Stream mode}} - V~tomto re¾imu my¹ pravidelnì zasílá hostiteli informaci o~zmìnì polohy a stavu tlaèítek. Frekvence odesílání tìchto informací je tzv. vzorkovací frekvence, která je defaultnì nastavena na hodnotu 100/sec. Hodnotu lze zmìnit pøíkazem \uv{Set Sample Rate} (0xF3).
+
+Pozor! Po resetu je bohu¾el zasílání dat (poloha a stav tlaèítek) zakázáno a je nutné jej explicitnì povolit zasláním pøíkazu \uv{Enable Data Reporting} (0xF4).
+
+Stream mode je výchozí re¾im. Po resetu my¹ pøejde právì do tohoto re¾imu. Lze do nìj také pøejít pøíkazem \uv{Set Stream Mode} (0xEA).
+
+\item{\textbf{Remote mode}} - V~re¾imu Remote mode my¹ prùbì¾nì aktualizuje svùj vnitøní stav, ale neodesílá ho hostovi. Místo toho se musí host sám dotazovat pomocí pøíkazu \uv{Read Data} (0xEB). Po pøijetí pøíkazu my¹ ode¹le jeden datový paket a vynuluje svùj stav. Tento re¾im není pøíli¹ vyu¾íván.
+
+\item{\textbf{Wrap mode}} - Tento re¾im se nevyu¾ívá.
+\end{itemize}
+
+Populárním roz¹íøením standardní PS/2 my¹i je tzv. \uv{Microsoft Intellimouse Extensions}. Pøidává podporu a¾ pro 5 tlaèítek a scrollovací koleèko. Data jsou pak odesílána v~roz¹íøeném 4-bajtovém paketu. Toto roz¹íøení ve své práci nepou¾ívám.
+
+Proto¾e chci pou¾ívat standardní re¾im my¹i v~stream mode re¾imu, následuje ukázka typické komunikace mezi hostem a my¹í pøi inicializaci:
+
+\begin{verbatim}
+Host:  FF  Reset command
+Mouse: FA  Acknowledge
+Mouse: AA  Self-test passed
+Mouse: 00  Mouse ID
+Host:  F4  Enable Data Reporting
+Mouse: FA  Acknowledge
+... Nyní ji¾ bude my¹ automaticky zasílat datové pakety se svým stavem
+... Napø.: stisknuté levé tlaèítko a posunutí my¹i po ose X o~16 pixelù
+Mouse: 09  bit0 = levé tlaèítko, bit3 = v¾dy 1
+Mouse: 10  posun v~ose X
+Mouse: 00  posun v~ose Y
+...
+\end{verbatim}
+
+\subsection{Kempston Mouse}\label{sec:kempstonMouse}
+Rozhodl jsem se, ¾e ve své práci budu podporovat právì tuto my¹. Dùvodem je extrémnì snadná a rychlá softwarová obsluha a zároveò i snadná hardwarová implementace. Kempston mouse se doèkala øady rùzných modifikací a vylep¹ení. Má implementace vychází z~verze Kempston Mouse Turbo \cite{KMouseTurbo}.
+
+Softwarová obsluha my¹i je velice snadná. U¾ivatel toti¾ pouze ète hodnoty z~patøièných I/O portù, které jsou ukázány v~tabulce \ref{tab:KMporty}. Kempston Mouse Turbo oproti originální verzi Kempston Mouse vyu¾ívá plného adresování v~dolní èásti adresy, aby se zamezilo nechtìným konfliktùm na sbìrnici.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Funkce & port & adresace portu binárnì (A15 a¾ A0)\\ \hline\hline
+tlaèítka & 64223 (0xFADF) & xxxxx0x0 11011111\\ \hline
+osa X & 64479 (0xFBDF) & xxxxx0x1 11011111\\ \hline
+osa Y & 65503 (0xFFDF) & xxxxx1x1 11011111\\ \hline
+\end{tabular}
+\caption{Adresace portù Kempston Mouse}
+\label{tab:KMporty}
+\end{table}
+
+Ka¾dá osa má rozsah od 0 do 255 (jeden bajt). Pøi pohybu my¹i vpravo je hodnota osy X postupnì inkrementována, pøi pohybu vlevo se hodnota naopak sni¾uje. To stejné platí i pro osu Y, která je inkrementována pøi pohybu dolù. Mezní hodnoty ale nejsou o¹etøovány, tak¾e pøi inkrementaci hodnoty 255 dojde k~pøeteèení na hodnotu 0 a naopak pøi dekrementaci hodnoty 0 dojde k~pøeteèení na hodnotu 255.
+
+Stav tlaèítek je dostupný na portu 0xFADF. Bit 0 odpovídá pravému tlaèítku, bit 1 levému tlaèítku a bit 2 prostøednímu tlaèítku. Bity D3 a¾ D7 jsou v¾dy nastaveny na hodnotu log. 1. Kempston Mouse Turbo je¹tì navíc pøidává podporu 4. tlaèítka, já jej v¹ak nepodporuji. Log. 0 znaèí stisknuté tlaèítko, log. 1 znaèí uvolnìné tlaèítko.
+
+Rozhraní architektury je následující:
+
+\begin{verbatim}
+entity MOUSE is
+    port (
+        CLK      : in  std_logic;
+        RESET    : in  std_logic;
+        -- komunikace s~procesorem        
+        ADDR     : in  std_logic_vector(15 downto 0);
+        DATA_OUT : out std_logic_vector(7 downto 0);
+        -- signaly pro komunikaci s~PS2 vystupem z~FPGA     
+        M_CLK    : inout std_logic;
+        M_DATA   : inout std_logic
+    );
+end entity;
+\end{verbatim}
+
+Souèástí architektury je øadiè PS/2 popsaný v~kapitole \ref{sec:ps2}. Signály \texttt{M\_CLK} a \texttt{M\_DATA} jsou výstupy z~øadièe a slou¾í pro komunikaci s~my¹í pomocí PS/2 protokolu.
+
+O~komunikaci s~PS/2 øadièem se stará stavový automat FSM\_MOUSE. Jak bylo uvedeno v~kapitole \ref{sec:mouseProtocol}, my¹ po resetu pøejde do stream módu, ale zasílání dat je defaultnì vypnuto. Proto automat ode¹le do my¹i pøíkaz \uv{Enable Data Reporting} (0xF4) a oèekává odpovìï 0xFA. Poté pøejde do stavu S\_WAIT, ve kterém èeká na pøijetí datových paketù se stavem my¹i.
+
+Automat ignoruje poèáteèní inicializaci my¹i, kdy mu my¹ zasílá informace o~stavu BAT testu (0xAA pøi úspìchu nebo 0xFC pøi chybì) a dále svoje ID (0x00). Dùvodem je zjednodu¹ení hardware. Pokud my¹ nebude fungovat, u¾ivatel to zajisté sám pozná a proto není potøeba ¾ádné speciální hardwarové o¹etøování. Takté¾ se vyu¾ívá vlastnosti, ¾e my¹ po zapnutí sama provede RESET a není nutné jí explicitnì posílat pøíkaz RESET.
+
+Automat ve stavu S\_WAIT èeká na pøíchozí datové pakety, jejich¾ struktura je vysvìtlena v~tabulce \ref{tab:mysDataPacket}. Pokud je pøijat bajt, který má ve 3. bitu hodnotu log. 1, jedná se o~první bajt paketu a je ulo¾en do registru \texttt{BYTE1}. Druhý bajt paketu je následnì ulo¾en do registru \texttt{BYTE2} a tøetí do registru \texttt{BYTE3}.
+
+Po pøijetí celého paketu dojde ve stavu S\_CHANGE ke zpracování pøijatých dat. Do registru \texttt{K\_BUTTON} se zapí¹e stav stisknutých kláves z~prvního bajtu. Vzhledem k~tomu, ¾e Kempston mouse chápe log. 0 jako stisknuté tlaèítko a log. 1 jako uvolnìné, je nutné provést negaci pøijatých hodnot a také zmìnit poøadí pøijatých bitù, aby tlaèítka odpovídala rozmístìní bitù v~Kempston Mouse rozhraní.
+
+Dále se provede aritmetický souèet aktuální pozice my¹i, ulo¾ené v~registrech \texttt{K\_AXIS\_X} a \texttt{K\_AXIS\_Y}, s~pøijatou zmìnou polohy my¹i, ulo¾enou v~registrech \texttt{BYTE2} (osa X) a \texttt{BYTE3} (osa Y). Ji¾ víme, ¾e my¹ zasílá relativní zmìnu polohy od pøedchozího paketu a hodnota je reprezentována v~doplòkovém kódu. Pokud je relativní zmìna polohy my¹i záporná, aritmetický souèet ve skuteènosti provede rozdíl, co¾ je pøesnì ná¹ cíl.
+
+Procesor pomocí sbìrnice \texttt{ADDR} adresuje registry z~tabulky \ref{tab:KMporty}. Obsah registrù se okam¾itì objevuje na výstupní sbìrnici \texttt{DATA\_OUT}.
+
+
+\section{VGA øadiè}\label{sec:VGAdriver}
+Implementace øadièe VGA je souèástí knihovny FITkit \cite{FITkit} a proto zde opìt nebudu popisovat jeho konkrétní implementaci, ale pouze ètenáøe seznámím s~jeho rozhraním.
+
+\begin{verbatim}
+entity vga_controller is
+    generic (
+        REQ_DELAY : natural := 1
+    );
+    port (
+        -- Hodiny + reset
+        CLK     : in std_logic;
+        RST     : in std_logic;
+        ENABLE  : in std_logic;
+        -- Nastaveni rozliseni (popis v~VGA_CONFIG.VHD)
+        -- Pozor: Hodnota musi zustat stale platna!
+        MODE    : in std_logic_vector(60 downto 0);
+        -- Vstup / pozadavek
+        DATA_RED    : in  std_logic_vector(2 downto 0);
+        DATA_GREEN  : in  std_logic_vector(2 downto 0);
+        DATA_BLUE   : in  std_logic_vector(2 downto 0);
+        ADDR_COLUMN : out std_logic_vector(11 downto 0);
+        ADDR_ROW    : out std_logic_vector(11 downto 0);
+        -- Vystup na VGA
+        VGA_RED   : out std_logic_vector(2 downto 0);
+        VGA_GREEN : out std_logic_vector(2 downto 0);
+        VGA_BLUE  : out std_logic_vector(2 downto 0);
+        VGA_HSYNC : out std_logic;
+        VGA_VSYNC : out std_logic;
+        -- H/V Status
+        STATUS_H  : out vga_hfsm_state;
+        STATUS_V  : out vga_vfsm_state
+    );
+end entity;
+\end{verbatim}
+
+Signály \texttt{VGA\_RED}, \texttt{VGA\_GREEN}, \texttt{VGA\_BLUE}, \texttt{VGA\_HSYNC} a \texttt{VGA\_VSYNC} jsou výstupy z~øadièe, které se pøipojují na VGA port vnì FPGA.
+
+Výstupy \texttt{ADDR\_COLUMN} a \texttt{ADDR\_ROW} spoleènì urèují pozici bodu, který se bude zobrazovat. Vstupy \texttt{DATA\_RED}, \texttt{DATA\_GREEN} a \texttt{DATA\_BLUE} jsou hodnoty barev RGB pro právì adresovaný bod obrazovky. Tyto vstupy nejsou nijak potvrzované, øadiè si je sám automaticky vzorkuje.
+
+Proto¾e poèet taktù mezi po¾adavkem na data a vlastním vystavením dat se mù¾e u~ka¾dé periferie li¹it, existuje v~øadièi generický parametr \texttt{REQ\_DELAY}, pomocí kterého lze nastavit, kolik taktù potøebuje periferie mezi po¾adavkem (nastavení \texttt{ADDR\_COLUMN} a \texttt{ADDR\_ROW}) a vystavením barevných hodnot pro tento po¾adavek (signály \texttt{DATA\_\{RED,GREEN,BLUE\}}). Výchozí hodnota 1 znamená, ¾e ihned v~následujícím taktu za po¾adavkem musí být vystavena platná data.
+
+Pomocí vstupu \texttt{MODE} se nastavuje rozli¹ení obrazu. Popis správného nastavení je v~dokumentaci.
+
+Signály \texttt{STATUS\_H} a \texttt{STATUS\_V} indikují stav øadièe. Pro mé øe¹ení nejsou dùle¾ité.
+
+
+
+
+\section{Grafická jednotka}\label{res:GPU}
+Grafická jednotka se stará o~autonomní vykreslování obrazu na monitor. Implementace vychází z~informací uvedených v~kapitole \ref{sec:grafika}. Rozhraní entity je následující:
+
+\begin{verbatim}
+entity GPU is
+    port (
+        CLK         : in  std_logic;
+        RESET       : in  std_logic;
+        -- okraj (BORDER)
+        BORDER_IN   : in  std_logic_vector(7 downto 0);
+        BORDER_WR   : in  std_logic;
+        -- signaly VGA radice
+        VGA_VSYNC   : out  std_logic;
+        VGA_HSYNC   : out  std_logic;
+        VGA_RED     : out std_logic_vector(2 downto 0);
+        VGA_GREEN   : out std_logic_vector(2 downto 0);
+        VGA_BLUE    : out std_logic_vector(2 downto 0);
+        -- signaly pro komunikaci s~pameti
+        ADDR        : out std_logic_vector(15 downto 0);
+        READ_EN     : out std_logic;
+        DATA_IN     : in  std_logic_vector(7 downto 0);
+        DATA_IN_VLD : in  std_logic;
+        REFRESH     : out std_logic -- povoleni refresh pameti
+    );
+end entity;
+\end{verbatim}
+
+Souèástí architektury GPU je i VGA øadiè popsaný v~kapitole \ref{sec:VGAdriver}. Výstupy z~øadièe jsou pøímo pøipojeny na výstupy entity GPU. Jedná se o~signály s~pøedponou \texttt{VGA\_}.
+
+Øadiè je pomocí svého signálu \texttt{MODE} nakonfigurován na rozli¹ení $640×480$ pixelù s~obnovovací frekvencí 60Hz. Z~pøedchozích kapitol ale víme, ¾e rozli¹ení poèítaèe ZX Spectrum je pouze $256×192$ pixelù. Rozhodl jsem se, ¾e ka¾dý pixel obrazu nahradím ètvercem o~rozmìrech $2×2$ pixely, èím¾ se obraz zvìt¹í na rozmìry $512×384$ pixelù. Obraz je posunut do støedu obrazovky a kolem nìj je zobrazován okraj (BORDER). Horní i spodní okraj je vysoký 48 bodù, levý a pravý okraj je ¹iroký 64 bodù, èím¾ je dosa¾eno celkového rozli¹ení $640×480$ pixelù.
+
+Grafická jednotka je slo¾ena ze dvou stavových automatù. Jeden z~nich (FSM\_SDRAM) zaji¹»uje komunikaci s~SDRAM pamìtí, druhý (FSM\_DRAW) obsluhuje øadiè VGA.
+
+Z~pøedchozích kapitol víme, ¾e obraz je rozdìlen do møí¾ky $32×24$ znakù o~rozmìrech $8×8$ pixelù a ka¾dý znak má navíc i svùj vlastní atribut. Proto¾e VGA øadiè pracuje postupnì po øádcích od souøadnice (0,0) po souøadnici (639,479), nevykresluje se celý znak naráz, ale kreslí se postupnì první øádek v¹ech znakù, pak druhý øádek v¹ech znakù atd. 
+
+V¾dy, kdy¾ VGA øadiè zaèíná kreslit nový znak (první pixel libovolného øádku ve znaku), automat FSM\_SDRAM zaène z~SDRAM pamìti pøednaèítat novou dvojici bajtù - data a odpovídající atribut znaku. Adresa v~pamìti se vypoèítá podle obrázku \ref{img:videoadr}. Z~toho dùvodu je nutné mít dvì sady registrù. V~jedné sadì je ulo¾en atribut a data právì kresleného znaku, do druhé sady registrù se pøednaèítá následující znak. Tyto dvì sady se pravidelnì støídají podle toho, zda se kreslí sudý èi lichý znak. Konkrétnì jsou multiplexorem pøepínány pomocí signálu \texttt{ADDR\_COLUMN(4)}, který vystupuje z~VGA øadièe a je souèástí adresy udávající pozici kresleného bodu v~ose X.
+
+Automat FSM\_SDRAM pomocí signálu \texttt{ADDR} a \texttt{READ\_EN} vysílá po¾adavek na ètení z~SDRAM pamìti. Naètená data se s~urèitým zpo¾dìním objeví na vstupu \texttt{DATA\_IN} a jejich pøipravenost je signalizována signálem \texttt{DATA\_IN\_VLD}. Automat pak pøijatá data zapisuje do odpovídajících registrù.
+
+Generický parametr \texttt{REQ\_DELAY} je ve VGA øadièi nastaven na hodnotu 0, co¾ znamená, ¾e doba taktu mezi po¾adavkem na data a vlastním vystavením dat je 0 taktù. To je v~poøádku, proto¾e vèasné pøednaètení dat má na starosti automat FSM\_SDRAM a data pro VGA øadiè jsou tak v¾dy dostupná v~aktuálním taktu. Automat k~tomuto úèelu pou¾ívá svoje vlastní poèítadlo øádku a sloupce, pomocí kterých se adresuje SDRAM pamì».
+
+Vstupní signály \texttt{BORDER\_IN} a \texttt{BORDER\_WR} slou¾í k~zápisu barvy okraje do registru \texttt{border}. Adresace registru je provádìna vnì architektury. Pokud procesor pomocí vstupnì/výstupní instrukce zapisuje na adresu 0xFE, je nastaven signál \texttt{BORDER\_WR} a barva okraje se ulo¾í do registru.
+
+Automat FSM\_DRAW se stará o~obsluhu VGA øadièe. Øadiè VGA generuje adresu zobrazovaného pixelu a automat FSM\_DRAW mu na vstupu pøepíná zdroj barvonosného signálu. Pokud je automat ve stavu kreslení horizontálního nebo vertikálního okraje, je na vstupu øadièe pøipojena barva ulo¾ená v~registru \texttt{border}. Pokud je automat ve stavu kreslení obrazu, jsou zdrojem barev registry s~atributem a daty.
+
+Pokud se právì zaèíná kreslit poslední znak levého vertikálního okraje, dojde k~povolení èinnosti automatu FSM\_SDRAM, který z~SDRAM pamìti zaène naèítat data a atributy následujícího znaku. Díky tomu jsou data dopøedu pøipravena a je mo¾né zaèít vèas vykreslovat obraz. Jakmile je dosa¾eno pravého okraje, je automat opìt pozastaven, aby se zbyteènì nezatì¾ovala pamì».
+
+Tabulka \ref{tab:atributy} ukazuje význam bitù v~registru atributu. Konkrétní barva pozadí èi popøedí je vysvìtlena v~tabulce \ref{tab:atribBarvy}. Pokud je v~datovém registru pro aktuální pixel nastavena log. 1, znamená to, ¾e se má bod vykreslit barvou popøedí. V~opaèném pøípadì se bod zobrazí barvou pozadí.
+
+Vzhledem k~tomu, ¾e VGA øadiè vy¾aduje RGB hodnoty barev, je nutné barvy ZX Spectra do tohoto formátu transformovat. To provádí multiplexor mx\_color\_output. K~tøí-bitové informaci o~barvì pixelu (buï popøedí nebo pozadí) se pøidá ètvrtý bit, který udává jas pixelu (6. bit v~registru atributu). Tím získáme ètyøbitovou adresu pro multiplexor, který na svùj výstup pøepíná odpovídající RGB hodnotu barvy. Tato hodnota je následnì vedena na vstup VGA øadièe.
+
+Dal¹í dùle¾itou èástí architektury je blikání znaku, které se povoluje 7. bitem v~registru atributu. Pokud je blikání povoleno, dochází k~pøepínání barvy popøedí a pozadí s~kmitoètem cca 3 Hz. V~architektuøe je 5-bitový volnì bì¾ící èítaè \texttt{flash\_counter}, který se inkrementuje v¾dy, kdy¾ dojde k~vertikální synchronizaci. Pøi obnovovací frekvenci 60Hz dochází k~blikání s~frekvencí $f_{flash} = 60 ÷ 2^4 = 3,75 Hz$. Blikání se odvozuje z~obnovovací frekvence obrazovky kvùli úspoøe hardware. Pokud by bylo blikání odvozeno od hodinového signálu, byl by potøeba 25-bitový èítaè.
+
+Grafická jednotka pomocí signálu \texttt{REFRESH} signalizuje, ¾e zaèala vykreslovat spodní vertikální okraj a nebude tedy del¹í dobu potøebovat pøistupovat k~pamìti (po celou dobu kreslení spodního okraje a následnì i horního okraje). V~tuto chvíli je mo¾né bezpeènì provést obnovu pamìti. Pøi kreslení obrazu toti¾ grafická jednotka potøebuje neustále pøistupovat k~pamìti a pokud by se v~tu chvíli zaèal provádìt refresh, nebylo by mo¾né vèas naèíst potøebná data a v~obrazu by docházelo k~chybám. 
+
+
+
+%============================
+\section{SPI rozhraní}\label{sec:spi}
+SPI (Serial Peripheral Interface) je jednoduché sériové rozhraní, které nalezneme témìø v~ka¾dém mikrokontroléru a lze pomocí nìj snadno pøipojit rùzné periferie, které protokol SPI podporují. V~na¹em pøípadì se bude jednat o~SD/MMC pamì»ové karty a pamì» FLASH pro ulo¾ení obsahu ROM ZX Spectrum.
+
+Komunikace je zalo¾ena na principu Master-Slave. V¹echna zaøízení mají spoleènou datovou sbìrnici (MOSI a MISO) a hodinový signál (SCLK). Ka¾dý slave má svùj vlastní adresový signál /SS (Slave Select), pomocí kterého master adresuje konkrétního slavea. Princip propojení mastera se slavem je na obrázku \ref{img:spiPrincip}. 
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.4]{img/spi_princip.png}
+  \caption{Propojení mastera s~jedním slavem}
+  \label{img:spiPrincip}  
+\end{figure}
+
+Hodinový signál musí generovat host. Signálem /SS se provede aktivace slavea. Samotná komunikace probíhá sériovì. V~ka¾dém taktu si master a slave navzájem vymìní jeden bit. Pøes vodiè MOSI (Master Output Slave Input) master posílá data slaveovi, vodièem MISO (Master Input Slave Output) naopak master pøijímá data od slavea. Po osmi taktech má master i slave pøijatý celý bajt.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=1.0]{img/spi.png}
+  \caption{Èasování SPI rozhraní pro SD karty \cite{howsdmmc}}
+  \label{img:spiTiming}  
+\end{figure}
+
+Obrázek \ref{img:spiTiming} ukazuje èasový prùbìh SPI rozhraní. Pøi vzestupné hranì hodin se provede vzorkování vstupního signálu a ulo¾ení do posuvného registru, pøi sestupné hranì se provede posun bitù v~registru.
+
+Nyní se podíváme na konkrétní implementaci SPI rozhraní v~emulátoru:
+
+\begin{verbatim}
+entity spi is
+    port (
+        RESET    : in std_logic;
+        CLK      : in std_logic;
+        -- vstup/vystup
+        DATA_IN  : in std_logic_vector(7 downto 0);
+        DATA_OUT : out std_logic_vector(7 downto 0);
+        WRITE_EN : in std_logic;
+        READY    : out std_logic;
+        -- SPI rozhrani
+        MOSI     : out std_logic;
+        MISO     : in  std_logic;
+        SCLK     : out std_logic
+    );
+end spi;
+\end{verbatim}
+
+Pomocí signálu \texttt{READY} øadiè informuje mastera, ¾e je pøipraven ke komunikaci. Pokud se na vstupním signálu \texttt{WRITE\_EN} objeví hodnota log. 1, znamená to, ¾e host (master) chce odeslat data. V~následujícím stavu se na výstupu \texttt{READY} nastaví log. 0 a do datového registru \texttt{DATA\_IN\_REG} se zapí¹e vstupní hodnota z~portu \texttt{DATA\_IN}.
+
+Nyní se spustí volnì bì¾ící èítaè \texttt{FLASH\_CLK}. Jeho nejni¾¹í bit je pou¾it jako výstupní hodinový signál \texttt{SCLK}. Komunikace po SPI rozhraní tedy probíhá s~polovièní frekvencí, ne¾ jaká je do øadièe pøivedena signálem \texttt{CLK}.
+
+Pomocí bitù \texttt{FLASH\_CLK(3 downto 1)} se na výstupní datový vodiè \texttt{MOSI} pøepíná jeden z~osmi bitù odesílaných dat ulo¾ených v~registru \texttt{DATA\_IN\_REG}. Zároveò se s~ka¾dou nábì¾nou hranou signálu \texttt{SCLK} vzorkuje vstupní vodiè \texttt{MISO} a tento bit se postupnì pøidává zprava k~posuvnému registru \texttt{DATA\_OUT\_REG}. Po osmi taktech máme v~tomto registru kompletní naètený bajt od slavea.
+
+Jakmile volnì bì¾ící èítaè \texttt{FLASH\_CLK} nabyde hodnoty \uv{1111}, znamená to, ¾e v¹ech 8 bitù bylo odesláno a zároveò i pøijato, komunikace se ukonèí (volnì bì¾ící èítaè se pozastaví, aby negeneroval hodinový signál) a dokonèení komunikace je indikováno signálem \texttt{READY}.
+
+
+%============================
+\section{Øadiè SD/MMC karet}
+Tato kapitola je zpracována podle \cite{howsdmmc, SDbakalarka}.
+
+SD (Secure Digita) karta je pamì»ové zaøízení urèené pro mobilní zaøízení, jako jsou fotoaparáty, mobilní telefony apod. Standard SD vznikl jako roz¹íøení star¹ího formátu MMC (Multi Media Card). Pøiná¹í napøíklad digitální správu práv DRM, nové komunikaèní protokoly (jednobitová a ètyøbitová sbìrnice) a nebo schopnost I/O roz¹íøení.
+
+SD karty jsou pøi dodr¾ení urèitých podmínek zpìtnì kompatibilní s~MMC. Øadiè, který budu dále popisovat, je primárnì urèen pro MMC karty a proto by na nìm mìly fungovat také SD karty.
+
+Data jsou mezi kartou a hostem pøená¹eny po blocích o~velikosti 512 bajtù, tak¾e na vy¹¹í vrstvì mù¾eme na kartu nahlí¾et jako na klasický disk a pou¾ívat na ní napø. klasické souborové systémy FAT16/FAT32.
+
+Obrázek \ref{img:sdmmcpinout} ukazuje rozmístìní vývodù na pamì»ové kartì MMC v~porovnání s~pamì»ovou kartou SD. Vidíme, ¾e MMC má 7 vývodù, kde¾to SD jich má rovných 9. Tøi z~nich jsou napájecí, zbytek jsou aktivní vodièe. Dùle¾ité je, ¾e rozmístìní vodièù je shodné u~obou typù karet.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{img/sdmmc_contact.jpg}
+  \caption{Rozmístìní pinù u~SD a MMC karty \cite{howsdmmc}}
+  \label{img:sdmmcpinout}  
+\end{figure}
+
+
+
+\subsection{Komunikaèní protokol}
+Oba typy karet podporují sériový protokol SPI (Serial Peripheral Interface), který byl vysvìtlen v~kapitole \ref{sec:spi}. Ten má obrovskou výhodu ve své jednoduchosti. Vìt¹ina mikrokontrolérù je toti¾ vybavena SPI øadièem, tak¾e lze s~pamì»ovou kartou velice snadno komunikovat bez nutnosti pou¾ívat nìjaké speciální rozhraní. Karta sice pomocí SPI nemù¾e komunikovat s~hostem nejvy¹¹í mo¾nou rychlostí, ale to nemusí být u~mnoha aplikací na ¹kodu. Ani v~na¹em pøípadì nepo¾adujeme od karty vysokou komunikaèní rychlost, proto¾e budeme naèítat soubory o~velikosti nìkolik desítek kilobajtù. Proto se v~této práci budeme vìnovat pouze SPI módu.
+
+Podle definice MMC nepou¾ívá standardní SPI èasování, ale vzorkování i posun se provádìjí pøi nástupné hranì hodinového signálu. Ukazuje se v¹ak, ¾e MMC karta je také schopna pracovat v~tomto re¾imu a proto jsem se ho rozhodl pou¾ít pro oba typy pamì»ových karet.
+
+V~SPI re¾imu se komunikuje po bajtech. Jeden pøíkazový rámec od hosta do karty má fixní délku 6 bajtù. Jeho struktura vèetnì èasování je na obrázku \ref{img:sdCmdFrame}. Karta odpovídá pøíkazem R1, R2 nebo R3. Vzhledem k~tomu, ¾e komunikace je øízena hodinami, které generuje host, musí po odeslání svého pøíkazu stále odesílat bajt 0xFF a pøijímat data tak dlouho, dokud neobdr¾í validní odpovìï. Doba mezi pøíkazem a odpovìdí je 0 a¾ 8 bajtù u~SD a 1 a¾ 8 u~MMC karty. Kontrolní souèet CRC je pøi SPI komunikaci volitelný, ale nelze tento bajt zcela vynechat (a poslední bit musí mít hodnotu log. 1).
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{img/sd_cmdFrame.png}
+  \caption{Pøíkazový rámec pøi komunikaci host $\rightarrow$ karta \cite{howsdmmc}}
+  \label{img:sdCmdFrame}  
+\end{figure}
+
+První bajt pøíkazu je slo¾en ze dvou bitù, které indikují zaèátek pøíkazu a za nimi následuje 6 bitù indexu (mù¾e nabývat hodnot 0 a¾ 63), který urèuje èíslo pøíkazu. V~tabulce \ref{tab:sdcmd} jsou vybrány pouze ty nejdùle¾itìj¹í pøíkazy, které budeme v~této práci potøebovat. Kompletní dokumentaci nalezne ètenáø v~\cite{sdspec}.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Index & Argument & Odpovìï & Data & Popis \\ \hline\hline
+CMD0 & Ne (0) & R1 & Ne & Reset, výbìr protokolu \\ \hline
+CMD1 & Ne (0) & R1 & Ne & Inicializace \\ \hline
+CMD17 & Adresa[31:0] & R1 & Ano & Pøeète blok dat \\ \hline
+CMD55 & Ne (0) & R1 &  Ne & Musí pøedcházet ka¾dý ACMD$<$n$>$ pøíkazy. \\ \hline
+ACMD41 & & R1 & Ne & Pouze pro SD. Inicializace karty. \\ \hline
+\end{tabular}
+\caption{Pøehled nejdùle¾itìj¹ích pøíkazù pro SD/MMC karty}
+\label{tab:sdcmd}
+\end{table}
+
+Pøíkaz ACMD$<$n$>$ ve skuteènosti znamená sekvenci pøíkazù CMD55-CMD$<$n$>$. Tyto pøíkazy se v¹ak pou¾ívají pouze u~SD karet. MMC je nevy¾aduje. Pøíkaz CMD55 toti¾ urèuje, ¾e pøí¹tí pøíkaz bude aplikaènì specifický.
+
+Existuje celkem 3 formáty odpovìdí. Nás v¹ak bude zajímat pouze odpovìï R1, její¾ struktura je ukázána na obrázku \ref{img:sdR1}. Bit 0 signalizuje, ¾e probíhá inicializace karty. V~tuto dobu karta pøijímá pouze pøíkazy CMD0, CMD1, CMD58, CMD59 a ACMD41. Ostatní bity signalizují rùzné typy chyb.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{img/sd_r1.png}
+  \caption{Struktura odpovìdi R1 \cite{SDbakalarka}}
+  \label{img:sdR1}  
+\end{figure}
+
+
+Po pøipojení napájecího napìtí ke kartì je nutné vyèkat alespoò jednu milisekundu, poté nastavit signály DI a CS do vysoké úrovnì a provést alespoò 74 hodinových taktù signálem SCLK. Tím se karta uvede do nativního operaèního módu a teprve poté je schopna pøijímat dal¹í pøíkazy. Abychom kartu pøepnuli do SPI módu, je nutné provést následující akce:
+
+První pøíkaz, který je nutné kartì zaslal, je CMD0, èím¾ se provede reset karty a pøepnutí do SPI módu. Vzhledem k~tomu, ¾e CMD0 je je¹tì odesláno v~nativním módu, je nutné odeslat i správný CRC. Jakmile karta pøejde do SPI, není ji¾ CRC vy¾adováno, pokud jej øadiè explicitnì nepovolí. Odpovìdí karty na pøíkaz CMD0 je odpovìï R0 s~nastaveným nultým bitem (hodnota 0x01), kterou signalizuje, ¾e karta èeká na inicializaci.
+
+Nyní je nutné odeslat pøíkaz CMD1 v~pøípadì MMC karty, nebo pøíkaz ACMD41 (sekvence CMD55 a CMD41) v~pøípadì SD karty, èím¾ se provede inicializace. Odpovìdí na tyto pøíkazy je zpráva R1, která ji¾ bude mít v~nultém bitu hodnotu log. 0, tedy zpráva 0x00. V~tuto chvíli je karta plnì inicializována a je mo¾né èíst a zapisovat data.
+
+Inicializace SD a MMC karet se tedy li¹í. Dne¹ní karty v¹ak vìt¹inou podporují oba typy inicializace. Proto jsem se rozhodl vyu¾ít variantu, která se pou¾ívá u~MMC karet, tedy pøíkaz CMD1.
+
+Nejmen¹í jednotka dat, kterou lze èíst/zapisovat, je jeden blok o~velikosti 512 bajtù. Pøíkaz CMD17 pøeète ze zadané adresy jeden blok. Pøíkazem CMD18 lze pøeèíst více blokù po sobì. Tuto funkci v¹ak nebudeme vyu¾ívat.
+
+Po odeslání pøíkazu CMD17 karta ode¹le odpovìï R1. Host poté musí èíst vstup tak dlouho, dokud nepøijme úvodní hlavièku datového paketu. Ta má v~pøípadì pøíkazu CMD17 hodnotì 0xFE. Za ní ji¾ následuje 512 bajtù dat.
+
+
+\subsection{Rozhraní øadièe SD/MMC karet}\label{sec:sdradic}
+Nyní se podíváme na horní vrstvu øadièe SD/MMC karet. Ji¾ víme, ¾e øadiè ke komunikaci pou¾ívá SPI rozhraní popsané v~kapitole \ref{sec:spi}. Vývody pro pøipojení øadièe k~SD/MMC kartì zaèínají pøedponou \texttt{SD\_}.
+
+\begin{verbatim}
+entity sdcard is
+    port ( 
+        -- Reset a synchronizace
+        RESET     : in std_logic;
+        CLK     : in std_logic;
+        -- Datova a adresova sbernice
+        DATA_IN  : in std_logic_vector(7 downto 0);
+        DATA_OUT : out std_logic_vector(7 downto 0);
+        ADDR     : in std_logic_vector(2 downto 0);
+        WRITE_EN : in std_logic;
+        READ_EN  : in std_logic;
+        WAIT_n   : out std_logic;
+        ACK      : out std_logic;
+        -- Rozhrani SD karty
+        SD_CLK   : out std_logic;
+        SD_CS    : out std_logic;
+        SD_MOSI  : out std_logic;
+        SD_MISO  : in std_logic
+    );
+end sdcard;
+\end{verbatim}
+
+Souèástí øadièe je i 6 registrù pøístupných pro procesor. Jejich horní èásti I/O adresy jsou uvedeny v~tabulce \ref{tab:sdmmcReg}. Spodní èást I/O adresy øadièe SD/MMC je 0xF7. Registry \texttt{REGn} odpovídají jednotlivým bajtùm v~SPI pøíkazu (viz obr. \ref{img:sdCmdFrame}). Procesor naplní registry \texttt{REGn} a ode¹le pøíkaz do SD karty zápisem log. 1 do nultého bitu registru \texttt{CONTROL}.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\texttt{CPU\_ADDR(15..8)} & Registr & Popis\\ \hline\hline
+0x00 & REG0 & CMD pøíkaz \\ \hline
+0x01 & REG1 & Nejvy¹¹í bajt argumentu \\ \hline
+0x02 & REG2 & Prostøední bajt argumentu \\ \hline
+0x03 & REG3 & Nejni¾¹í bajt argumentu \\ \hline
+0x04 & REG4 & Kontrolní souèet CRC \\ \hline
+0x05 & CONTROL & Øídící registr \\ \hline
+\end{tabular}
+\caption{Adresy registrù øadièe SD/MMC}
+\label{tab:sdmmcReg}
+\end{table} 
+
+Komunikace s~SPI øadièem je øízena pomocí automatu \texttt{SD\_SPI\_FSM}. Po jeho aktivaci postupnì do karty odesílá pøes SPI rozhraní obsah registrù \texttt{REGn} a poté èeká na odpovìï R1.
+
+Celý øadiè je v¹ak øízen pomocí automatu \texttt{SD\_FSM}, který s~SPI øadièem komunikuje prostøednictvím automatu \texttt{SD\_SPI\_FSM}. Po resetu automat nejprve poèká 74 taktù na reset SD karty, následnì ode¹le pøíkaz CMD0 (softwarový reset) a poté CMD1 (inicializace karty). Nyní je øadiè pøipraven pøijímat a vyøizovat po¾adavky na ètení od procesoru.
+
+Pøi odeslání pøíkazu ètení (CMD17) je tento pøíkaz odeslán do pamì»ové karty a poèká se na odpovìï R1, kterou karta oznamuje, ¾e pøíkaz byl dokonèen. Nyní bude na jejím výstupu 512 bajtù dat. Pøi ka¾dém nastavení signálu \texttt{READ\_EN} se z~karty pøeète jeden bajt. Platnost tohoto bajtu je signalizována bitem \texttt{ACK}. Správný poèet ètených bajtù si musí hlídat host (buï softwarová aplikaci, nebo jiný externí obvod). Signálem \texttt{ACK} øadiè informuje, ¾e je pøeètený bajt platný.
+
+Bìhem èinnosti øadièe je signál \texttt{WAIT\_n} aktivní (log. 0), èím¾ øadiè pozastaví procesor. Po dokonèení operace je procesor opìt aktivován nastavením signálu \texttt{WAIT\_n} do log. 1.
+
+
+
+%============================
+\section{Procesor T80}
+Jak ji¾ bylo øeèeno v~kapitole \ref{nav:t80}, vyu¾iji ve své práci volnì dostupnou implementaci procesoru Z80 pod jménem T80 \cite{T80}. Nebudu zde pochopitelnì popisovat vnitøní implementaci, pouze se seznámíme s~rozhraním entity:
+
+\begin{verbatim}
+entity T80s is
+    generic(
+        Mode    : integer := 0;	-- 0 => Z80, 1 => Fast Z80, 2 => 8080, 3 => GB
+        T2Write : integer := 0;	-- 0 => WR_n active in T3, /=0 => WR_n active in T2
+        IOWait  : integer := 1	-- 0 => Single cycle I/O, 1 => Std I/O cycle
+    );
+    port(
+        RESET_n : in std_logic;
+        CLK_n   : in std_logic;
+        WAIT_n  : in std_logic;
+        INT_n   : in std_logic;
+        NMI_n   : in std_logic;
+        BUSRQ_n : in std_logic;
+        M1_n    : out std_logic;
+        MREQ_n  : out std_logic;
+        IORQ_n  : out std_logic;
+        RD_n    : out std_logic;
+        WR_n    : out std_logic;
+        RFSH_n  : out std_logic;
+        HALT_n  : out std_logic;
+        BUSAK_n : out std_logic;
+        A~: out std_logic_vector(15 downto 0);
+        DI      : in std_logic_vector(7 downto 0);
+        DO      : out std_logic_vector(7 downto 0)
+);
+end T80s;
+\end{verbatim}
+
+Dùle¾ité je, ¾e rozhraní entity je shodné se skuteèným rozhraním procesoru Z80. V¹echny øídící signály jsou aktivní v~log. 0 a neaktivní v~log. 1. Rozdíl je pouze u~datové sbìrnice. Zatímco u~skuteèného procesoru je datová sbìrnice souèasnì vstupní i výstupní, implementace T80 rozli¹uje samostatné vstupy a samostatné výstupy. Klasické pouzdro procesoru má toti¾ omezený poèet vývodù a sdílením vstupù a výstupù lze u¹etøit znaèné mno¾ství vývodù. Uvnitø FPGA v¹ak toto nehraje roli a je praktiètìj¹í mít vstupy a výstupy oddìlené.
+
+Èasové prùbìhy procesoru ji¾ byly vysvìtleny v~kapitole \ref{sec:Z80}. Pomocí generických parametrù \texttt{T2Write} a \texttt{IOWait} je v¹ak mo¾né je lehce modifikovat. 
+
+V¹imnìme si generického parametru \texttt{Mode}. Lze jím nastavit rùzné módy procesoru. A» u¾ standardní Z80, èi jeho zrychlenou variantu Fast Z80. Je ho v¹ak mo¾né pou¾ívat i jako klasický procesor 8080, nebo upravenou variantu Z80, která se pou¾ívala v~kapesních handheldech GameBoy.
+
+
+%============================
+\section{SDRAM øadiè}\label{sec:sdramdrv}
+Øadiè SDRAM je souèástí knihovny FITkit. Tato kapitola ètenáøe seznámí pouze s~rozhraním øadièe, popis implementace je dostupný v~\cite{FITkit}. Jsou k~dispozici dvì varianty: nízkoúrovòový nebo vysokoúrovòový øadiè. Rozhodl jsem se vyu¾ít nízkoúrovòový øadiè, proto¾e umo¾òuje manuálnì obsluhovat obnovu (refresh) pamìti. Proto zde popí¹u pouze tento.
+
+\begin{verbatim}
+entity sdram_raw_controller is
+   generic (
+      -- Generovani prikazu refresh radicem automaticky
+      GEN_AUTO_REFRESH : boolean := true;
+      OPTIMIZE_REFRESH : sdram_optimize := oAlone
+   );
+   port (
+      CLK     : in std_logic;
+      RST     : in std_logic;
+      ENABLE  : in std_logic;
+      BUSY    : out std_logic;
+      -- Address/data
+      ADDR_ROW    : in std_logic_vector(11 downto 0);
+      ADDR_COLUMN : in std_logic_vector(8 downto 0);
+      BANK        : in std_logic_vector(1 downto 0);
+      DATA_IN     : in std_logic_vector(7 downto 0);
+      DATA_OUT    : out std_logic_vector(7 downto 0);
+      DATA_VLD    : out std_logic; -- Output data valid
+      -- Command signal/set
+      CMD     : in sdram_func;
+      CMD_WE  : in std_logic;
+      -- Signals to SDRAM
+      RAM_A      : out std_logic_vector(13 downto 0);
+      RAM_D      : inout std_logic_vector(7 downto 0);
+      RAM_{DQM,CS,RAS,CAS,WE,CLK,CKE} : out std_logic;
+   );
+end sdram_raw_controller;
+\end{verbatim}
+
+Pomocí generického parametru \texttt{GEN\_AUTO\_REFRESH} se povoluje automatický refresh pamìti. Pøi hodnotì True je generován refresh s~intervalem 15~us a refresh celé SDRAM (4096 pøíkazù) probìhne za 61,44~ms lineárnì rozlo¾ených v~èase. Aby nedocházelo k~obnovování pamìti bìhem kreslení obrazu, je automatické obnovování zakázané a provádí se manuálnì odesláním pøíkazu fRefresh bìhem kreslení horizontálního okraje obrazu.
+
+Pokud je automatické obnovování pamìti zakázané, lze parametrem \texttt{OPTIMIZE\_REFRESH} nastavit, zda bude u¾ivatel zasílat pøíkazy fRefresh ve skupinách nebo samostatnì. Pøi hodnotì oAlone øadiè po provedení pøíkazu refresh automaticky aktivuje pøedchozí bank, co¾ urychlí následující pøíkaz ètení/zápis. Pøi hodnotì oMultiple øadiè oèekává více pøíkazù fRefresh po sobì a proto neaktivuje pùvodní banku.
+
+Adresování u~nízkoúrovòového øadièe se realizuje pomocí adresy sloupce (\texttt{ADDR\_COLUMN}), øádku (\texttt{ADDR\_ROW}) a banky (\texttt{ADDR\_BANK}). Adresa musí být platná v~dobì naèítání pøíkazu, tj. na nejbli¾¹í nástupné hranì hodinového signálu od nastavení signálù \texttt{CMD} a \texttt{CMD\_WE}.
+
+Existují 3 pøíkazy: fRefresh (obnova pamìti), fWrite (zápis dat do pamìti) a fRead (ètení z~pamìti). Pøíkaz mù¾e být proveden pouze v~pøípadì, ¾e signál \texttt{BUSY} má hodnotu log. 0. Pokud je ve stavu log. 1, znamená to, ¾e pamì» buï je¹tì nedokonèila pøedchozí pøíkaz, nebo provádí refresh pamìti. V~obou pøípadech je nutné poèkat na dokonèení aktuální operace a teprve pak pøíkaz odeslat.
+
+Po dokonèení pøíkazu ètení jsou ètená data vystavena na sbìrnici \texttt{DATA\_OUT} a tento stav je po dobu jednoho taktu signalizován signálem \texttt{DATA\_VLD}. Sbìrnice \texttt{DATA\_OUT} v¹ak obsahuje registr, tak¾e data jsou platná a¾ do dal¹ího ètení.
+
+Pøíkaz zápisu vy¾aduje platná data na vstupu \texttt{DATA\_IN} v~dobì naèítání pøíkazu. Dokonèení zápisu není nijak signalizováno. Doba zápisu je 1 takt, pokud nedojde ke kolizi s~po¾adavkem o~automatický refresh nebo aktivaci jiného banku. 
+
+Signály s~pøedponou \texttt{RAM\_} v~názvu vystupují z~øadièe a pomocí nich se øadiè pøipojuje k~externí SDRAM pamìti.
+
+
+%============================
+\section{SIMI DMA}\label{sec:hwsmdma}
+Vzhledem k~tomu, ¾e pøi naèítání aplikací z~SD karty se mezi kartou a pamìtí pøená¹í velké mno¾ství dat a softwarové kopírování se ukázalo býti velice pomalé, vznikla potøeba vytvoøit speciální hardwarový obvod, který by byl schopen autonomnì pøená¹et vìt¹í bloky dat. Tomuto øe¹ení se øíká DMA (Direct Memory Access).
+
+V nìkterých periferiích pro poèítaè ZX Spectrum (napø. diskový øadiè MB02) se vyu¾íval obvod Z80-DMA od firmy Zilog. Nebyl urèen pouze pro poèítaèe ZX Spectrum, byl navr¾en univerzálnì a pou¾íval se v ¹iroké ¹kále aplikací. Podporoval obousmìrný pøenos mezi pamìtí a I/O zaøízeními.
+
+Pro mùj emulátor v¹ak tento obvod není pøíli¹ vhodný. V~první øadì je zbyteènì komplikovaný. Dále má pou¾itá SDRAM pamì» mnohem vìt¹í kapacitu (8 MB), ne¾ kolik je poèítaè ZX Spectrum 128K, ale i Z80-DMA schopen adresovat. Pokud bych se rozhodl vyu¾ít pouze onìch 128K pamìti, speciální obvod by nebyl tøeba. Já v¹ak chci mít mo¾nost zápisu/ètení v~rámci celé pamìti, abych mohl napø. pøepínat bì¾ící aplikace. Detailní øe¹ení bude popsáno v~kapitole \ref{sec:zxsimi}. V~tuto chvíli nám staèí pouze informace, ¾e mùj DMA obvod zvládne adresovat celých 8 MB pamìti a podporuje pøenosy mezi pamìtí i mezi I/O rozhraními.
+
+Abych mùj DMA obvod odli¹il od originálního Z80-DMA, pojmenoval jsem ho SIMI DMA, zkrácenì SMDMA. Podívejme se nyní na rozhraní obvodu:
+
+\begin{verbatim}
+entity SMDMA is
+    port(
+        RESET       : in std_logic;
+        CLK         : in std_logic;
+        --signaly pro komunikaci s~procesorem
+        CPU_IORQ_n  : in std_logic;
+        CPU_RD      : in std_logic;
+        CPU_WR      : in std_logic;
+        CPU_WAIT_n  : out std_logic;
+        CPU_ADDR    : in std_logic_vector(15 downto 0);
+        CPU_DATA_IN : in std_logic_vector(7 downto 0);
+        --signaly pro komunikaci s~pameti a IO zarizenimi 
+        IORQ        : out std_logic;
+        MREQ        : out std_logic;
+        RD          : out std_logic;
+        WR          : out std_logic;
+        ACK         : in std_logic;
+        ADDR        : out std_logic_vector(22 downto 0);
+        DATA_IN     : in std_logic_vector(7 downto 0);
+        DATA_OUT    : out std_logic_vector(7 downto 0)
+    );
+end SMDMA;
+\end{verbatim}
+
+DMA øadiè obsahuje 5 význaèných registrù, do kterých mù¾e CPU zapisovat a pomocí kterých se øídí datové pøenosy. Tyto registry jsou adresovány pomocí horních 8 bitù adresy \texttt{CPU\_ADDR}. Konkrétní hodnoty jsou uvedeny v~tabulce \ref{tab:smdmaReg}.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\texttt{CPU\_ADDR(15..8)} & Registr & Popis\\ \hline\hline
+0x00 & ADDRA(7..0) & Nejni¾sích 8 bitù registru ADDRA \\ \hline
+0x01 & ADDRA(15..8) & Prostøedních 8 bitù registru ADDRA \\ \hline
+0x02 & ADDRA(22..16) & Nejvy¹¹ích 8 bitù registru ADDRA \\ \hline
+0x03 & DATA\_IN & Vstupní data urèená k~zápisu \\ \hline
+0x04 & ADDRB(7..0) & Nejni¾sích 8 bitù registru ADDRB \\ \hline
+0x05 & ADDRB(15..8) & Prostøedních 8 bitù registru ADDRB \\ \hline
+0x06 & ADDRB(22..16) & Nejvy¹¹ích 8 bitù registru ADDRB \\ \hline
+0x07 & LENGTH(7..0) & Spodních 8 bitù registru LENGTH \\ \hline
+0x08 & LENGTH(15..8) & Horních 8 bitù registru LENGTH \\ \hline
+0x09 & CONFIG & Konfiguraèní registr \\ \hline
+\end{tabular}
+\caption{Adresy registrù øadièe SMDMA}
+\label{tab:smdmaReg}
+\end{table}
+
+Registr \texttt{ADDRA} je ¹iroký 23 bitù a udává cílovou adresu pro zápis. Registr \texttt{ADDRB} udává zdrojovou adresu pro ètení. Pomocí 16-bitového registru \texttt{LENGTH} se nastavuje, kolik bajtù se má v~rámci transakce pøenést.
+
+Posledním registrem je \texttt{CONFIG}, který slou¾í ke konfiguraci DMA øadièe. Bit 0 povoluje inkrementaci registru cílové adresy (ADDRA) po ka¾dém zápisu. Bit 1 rozli¹uje zda se má zapisovat do pamìti (log. 0) nebo do I/O zaøízení (log. 1). Podobnì bit 4 povoluje inkrementaci registru zdrojové adresy (ADDRB) a bit 5 rozli¹uje, zda se má èíst z~pamìti (log. 0) nebo z~I/O rozhraní (log. 1).
+
+DMA øadiè podporuje dva re¾imy èinnosti: pøenosy blokù dat nebo pøenosy bajtù. V~obou pøípadech je nejdøíve nutné naplnit registry \texttt{ADDRA}, \texttt{ADDRB} a \texttt{CONFIG}. Pøenos bloku dat se odstartuje zápisem délky pøená¹eného bloku (poètu bajtù) do registru \texttt{LENGTH}. DMA øadiè v~tu chvíli pøevezme kontrolu a autonomnì provede transakci. Podle konfigurace v~registru \texttt{CONFIG} mù¾e bìhem èinnosti docházet k~inkrementaci adresových registrù.
+
+Druhou mo¾ností je zápis jednotlivých bajtù. K~tomu slou¾í registr \texttt{DATA\_IN}. Po zápisu hodnoty do tohoto registru se daná hodnota automaticky zapí¹e na cílovou adresu.
+
+Pokud procesor ète z~libovolné I/O adresy DMA øadièe, øadiè automaticky provede ètení ze zdrojové adresy a pøeètenou hodnotu vlo¾í na svùj výstup. Díky tomu mù¾e procesor èíst data z~libovolného pamì»ového místa SDRAM pamìti.
+
+
+
+%============================
+\section{Top level entita}
+Tato kapitola vysvìtluje princip propojení v¹ech komponent (entit), které byly vysvìtleny v~pøedchozích kapitolách, do jediného celku. Pøedev¹ím se pak vìnuje práci s~pamìtí, proto¾e ta se ukázala být støedem celého poèítaèe a zásadním zpùsobem ovlivòuje jeho výkon.
+
+\subsection{Generování maskovatelného pøeru¹ení INT}
+V~poèítaèi ZX Spectrum je nutné pravidelnì generovat maskovatelné pøeru¹ení procesoru prostøednictvím signálu INT. Pøi ka¾dém pøeru¹ení provede obslu¾ná rutina v~BASICu obsluhu klávesnice a magnetofonového rozhraní.
+
+Procesor vzorkuje signál INT pøi nábì¾né hranì hodinového signálu bìhem provádìní posledního strojového taktu aktuální instrukce (tedy pøi jejím dokonèení). Vzhledem k~tomu, ¾e provedení nejdel¹í instrukce trvá 23 strojových taktù, je nutné podr¾et pøeru¹ovací signál po dostateènì dlouhou dobu. V~poèítaèi ZX Spectrum je signál aktivní pøesnì 32 taktù a je generován v¾dy pøi vertikální synchronizaci obrazu, ke které dochází s~frekvencí 50 Hz.
+
+Podívejme se nyní na mé øe¹ení. Ka¾dý hodinový takt vzorkuji signál \texttt{VGA\_VSYNC}, který indikuje, ¾e se zaèala provádìt vertikální synchronizace. Pøi nábì¾né hranì tohoto signálu se nastaví pøeru¹ovací signál INT a také se spustí volnì bì¾ící èítaè \texttt{VGA\_VSYNC\_COUNT}, který je øízen hodinovým signálem procesoru. Po 32 taktech hodinového signálu procesoru se signál INT zru¹í a èítaè je opìt pozastaven.
+
+
+\subsection{Fyzický adresový prostor}\label{res:fyzAdr}
+Jak ji¾ bylo øeèeno v~pøedchozích kapitolách, rozhodl jsem se implementovat verzi poèítaèe ZX Spectrum 128K. Jeho uspoøádání pamì»ového prostoru bylo popsáno v~kapitole \ref{sec:RAMhier128}. V~této kapitole se podíváme na mojí implementaci.
+
+Víme, ¾e poèítaè ZX Spectrum 128K má dvì pamì»ové banky ROM o~celkové velikosti 32KB a 8 pamì»ových bank RAM o~celkové velikosti 128KB. Pou¾itá SDRAM pamì» má celkovou velikost 8MB, tak¾e problém s~nedostatkem pamìti zde nehrozí. Proto jsem pamì» rozdìlil pøedev¹ím z~pohledu snaz¹í implementace.
+
+Pamì» RAM mého emulátoru le¾í od adresy 0x000000 do 0x01FFFF, co¾ odpovídá osmi bankám po 16384 bajtech (dohromady 128KB). Pamìti ROM je pøidìlen adresový prostor od adresy 0x200000 do 0x03FFFF, co¾ opìt odpovídá osmi bankám po 16384 bajtech (celkem tedy 128KB). Víme, ¾e ROM je umístìna pouze ve dvou pamì»ových bankách (dohromady 32KB), zbylých 6 bank je tedy nevyu¾itých.
+
+Od adresy 0x040000 zaèíná nový adresový prostor RAM o~velikosti 128K. Do této èásti se naèítají aplikace z~pamì»ové karty. V~poèítaèi jsou tedy pøítomné dva adresové prostory RAM. První z~nich le¾í od adresy 0 a je zde ulo¾en operaèní systém ZX Simi OS, druhý adresový prostor le¾í od adresy 0x040000 a pou¾ívá se pro bìh spu¹tìných aplikací. Podrobné hardwarové øe¹ení je popsáno v~kapitole \ref{sec:hwtask}, softwarové øe¹ení je vysvìtleno v~kapitole \ref{sec:zxnacitani}.
+
+Tabulka \ref{tab:mapFyzRam} ukazuje uspoøádání fyzického pamì»ového prostoru.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+Od & Do & Velikost & Popis\\ \hline\hline
+0x000000 & 0x01FFFF & 128KB & Pamì» RAM pro operaèní systém ZX Simi OS\\ \hline
+0x020000 & 0x027FFF & 32KB & Pamì» ROM\\ \hline
+0x028000 & 0x03FFFF & 96KB & Volné místo\\ \hline
+0x040000 & 0x05FFFF & 128KB & Pamì» RAM pro spou¹tìné aplikace\\ \hline
+\end{tabular}
+\caption{Uspoøádání fyzického pamì»ového prostoru v emulátoru}
+\label{tab:mapFyzRam}
+\end{table}
+
+
+\subsubsection{Fyzická adresa procesoru}
+V~kapitole \ref{sec:RAMhier128} byl vysvìtlen princip pøepínání aktivní pamì»ové banky pomocí registru na I/O adrese 0x7FFE. V~mé implementaci se registr jmenuje \texttt{RAM\_CNTRL\_REG}. Zápis do registru je mo¾ný, pouze pokud má 5. bit v~registru hodnotu log. 0. Pokud obsahuje hodnotu log. 1, je registr uzamèený proti zápisu a opìtovný zápis je mo¾ný pouze po resetu.
+
+Nejvy¹¹í dva bity adresy procesoru (A15..A14) jsou pou¾ity jako adresový vstup multiplexoru \texttt{MX\_RAM\_CNTRL\_ADDR}, který na svùj 19-bitový výstup \texttt{RAM\_CNTRL\_ADDR} vybírá odpovídající adresu pro SDRAM øadiè. Pro snadnìj¹í pochopení vysvìtlím jeho èinnost pøímo na èásti kódu.
+
+\begin{verbatim}
+case T80_ADDR(15 downto 14) is
+when "00" => -- 0x0000 adresace ROM
+  RAM_CNTRL_ADDR <= '0' & '1' & "00" & RAM_CNTRL_REG(4)
+                    & T80_ADDR(13 downto 0);
+when "01" => -- 0x4000 adresace Video RAM
+  RAM_CNTRL_ADDR <= RAM_CNTRL_TASK & '0' & "101" & T80_ADDR(13 downto 0);
+when "10" => -- 0x8000
+  RAM_CNTRL_ADDR <= RAM_CNTRL_TASK & '0' & "010" & T80_ADDR(13 downto 0);
+when "11" => -- 0xC000 adresa mapovatelne pametove oblasti
+  RAM_CNTRL_ADDR <= RAM_CNTRL_TASK & '0' & RAM_CNTRL_REG(2 downto 0)
+                    & T80_ADDR(13 downto 0);
+end case;
+\end{verbatim}
+
+Výstupní adresa je v~podstatì slo¾ena ze ètyø èástí: výbìr oblasti RAM (ZX Simi OS nebo u¾ivatelská aplikace), výbìr ROM/RAM, èíslo pamì»ové banky a offset v~rámci banky. Nejvy¹¹í bit (18) slou¾í k~výbìru aktivní oblasti pamìti RAM (registr \texttt{RAM\_CNTRL\_TASK}). Operaèní systém ZX Simi OS je ulo¾en v~oblasti RAM od adresy 0 (log. 0), u¾ivatelská aplikace le¾í v~oblasti RAM od adresy 0x040000 (log. 1). Toto rozdìlení je vyu¾ito pøi spou¹tìní aplikací z~pamì»ové karty a bude detailnì vysvìtleno v~kapitolách \ref{sec:hwtask} a \ref{sec:zxnacitani}.
+
+Následující bit (17.) je nastaven na hodnotu log. 0, pokud chce procesor pøistupovat k~pamìti RAM (le¾í od adresy 0x000000h), nebo log. 1, pokud chce procesor pøistupovat k~pamìti ROM (le¾í od adresy 0x020000h).
+
+Následující 3 bity urèují èíslo banky (0-7) pamìti ROM nebo RAM. Zde se v~nìkterých pøípadech vyu¾ívá ji¾ zmínìný registr \texttt{RAM\_CNTRL\_REG}. Jeho nejni¾¹í 3 bity udávají èíslo aktivní banky (RAM0-RAM7), která má být mapována v~adresovém prostoru procesoru od adresy 0xC000h. Ètvrtý bit tohoto registru udává èíslo aktivní ROM (ROM0-ROM1)
+
+Poslední èást výstupní adresy je v¾dy nejni¾¹ích 14 bitù adresy procesoru. Tato èást toti¾ udává offset v~rámci jedné banky o~velikosti 16384 bajtù.
+
+\subsubsection{Fyzická adresa grafické jednotky}
+Proto¾e ZX Spectrum 128K umí vykreslovat obraz buï z~banky RAM5 (výchozí) nebo RAM7, je nutné fyzickou adresu v~pamìti vypoèítat. O~tom, která banka se pou¾ije rozhoduje 3. bit registru \texttt{RAM\_CNTRL\_REG}. Proto¾e adresa pamì»ové banky RAM5 (binárnì 101) a RAM7 (binárnì 111) se li¹í pouze v~jednom bitu, pou¾ije se k~adresaci pouze bit \texttt{RAM\_CNTRL\_REG(3)}. Registr \texttt{RAM\_CNTRL\_TASK} urèuje, zda se vykresluje z~oblasti RAM operaèního systému ZX Simi OS (adresa 0), nebo z~oblasti u¾ivatelské aplikace (adresa 0x040000). Celková fyzická adresa se získá takto:
+
+\begin{verbatim}
+RAM_CNTRL_TASK & '0' & '1' & RAM_CNTRL_REG(3) & '1' & gpu_addr(13 downto 0);
+\end{verbatim}
+
+V¹imnìme si, ¾e z~adresy GPU se pou¾ije pouze spodních 14 bitù, které slou¾í k~adresaci uvnitø banky. Jak ji¾ víme, její velikost je $2^{14}=16384$ bajtù.
+
+
+
+\subsection{Pøepínání bì¾ících procesù}\label{sec:hwtask}
+V~kapitole \ref{res:fyzAdr} bylo uvedeno, ¾e v~adresovém prostoru se nacházejí celkem dvì pamìti RAM o~velikostech 128K. První z~nich slou¾í pro bìh operaèního systému ZX Simi OS (fyzická adresa 0h) a druhý se pou¾ívá pro spou¹tìné aplikace z~karty (fyzická adresa 0x040000). O~výbìru aktivní oblasti rozhoduje registr \texttt{REG\_CNTRL\_REG}. Pro pøepínání mezi tìmito prostory (respektive bì¾ícími aplikacemi) bylo nezbytné vytvoøit speciální hardwarový obvod, který bude registr \texttt{REG\_CNTRL\_REG} ovládat.
+
+Operaèní systém ulo¾í do speciálního registru \texttt{TASK\_ADDR} adresu. Tato adresa je neustále porovnávána s~adresou, ze které procesor ète z~pamìti. Jakmile se procesor pokusí èíst z~adresy shodné s~adresou \texttt{TASK\_ADDR}, dojde k~pøepnutí adresových prostorù (nastavení registru \texttt{REG\_CNTRL\_REG}).
+
+V~kapitole \ref{sec:RAMhier128} byl vysvìtlen princip I/O registru na adrese 0x7FFD (v~mé implementaci nazvaný \texttt{RAM\_CNTRL\_REG}). Aplikace, které jsou ulo¾eny jako obraz pamìti (formát SNA a Z80) v~sobì také uchovávají pùvodní obsah tohoto registru. Operaèní systém bìhem naèítání obrazu ulo¾í pøeètenou hodnotu registru 7FFD do pomocného registru \texttt{TASK\_7FFD}. Bìhem pøepnutí procesu se pøekopíruje obsah pomocného registru \texttt{TASK\_7FFD} do skuteèného registru na adrese 0x7FFD, èím¾ dojde ke korektnímu nastavení prostøedí, které bylo ulo¾eno v~obrazu SNA nebo Z80.
+
+Pøepnutí procesu je nutné explicitnì povolit nastavením nultého bitu v~kontrolním registru \texttt{TASK\_CMD}.
+
+Celý obvod je mapován na I/O adresu 0x1F (spodních 8 bitù I/O adresy). Horních 8 bitù slou¾í k~adresaci jednotlivých registrù obvodu. Detailní informace jsou uvedeny v~tabulce \ref{tab:taskreg}.
+
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\texttt{CPU\_ADDR(15..8)} & Registr & Popis\\ \hline\hline
+0x00 & TASK\_ADDR(7..0) & Nejni¾¹ích 8 bitù registru TASK\_ADDR \\ \hline
+0x01 & TASK\_ADDR(15..8) & Nejvy¹¹ích 8 bitù registru TASK\_ADDR \\ \hline
+0x02 & TASK\_7FFD & Doèasný registr 7FFD poèítaèe ZX Spectrum 128K \\ \hline
+0x03 & TASK\_CMD & Øídící registr \\ \hline
+\end{tabular}
+\caption{Adresy registrù pro pøepínání bì¾ících procesù.}
+\label{tab:taskreg}
+\end{table}
+
+
+
+\subsection{Øízení pøístupu do pamìti}
+Proto¾e pamì» doká¾e obsluhovat v¾dy pouze jeden po¾adavek o~ètení/zápis, je nutné urèit prioritu po¾adavkù a zabránit kolizi pøi více po¾adavcích souèasnì. Následující seznam ukazuje prioritu po¾adavkù od nejvy¹¹í po nejni¾¹í:
+
+\begin{enumerate}
+\item Refresh pamìti
+\item Grafická jednotka - ètení
+\item SIMI DMA - zápis
+\item SIMI DMA - ètení
+\item T80 - zápis
+\item T80 - ètení
+\end{enumerate}
+
+Vidíme, ¾e nejvy¹¹í prioritu má obnova pamìti. To je logické, proto¾e pokud by se neustále objevoval po¾adavek s~vy¹¹í prioritou a obnova pamìti by musela èekat na jeho obslou¾ení, mohlo by dojít poru¹ení obsahu pamìti. Po¾adavek na obnovu pamìti je generován manuálnì v~pøesnì definovaný moment (bìhem kreslení horizontálního okraje), tak¾e zbyteènì neomezuje ostatní po¾adavky (pøedev¹ím ètení dat z~grafické jednotky).
+
+Druhou nejvy¹¹í prioritu má grafická jednotka. Ta toti¾ musí pravidelnì èíst grafická data a pokud by její po¾adavky nemohly být vèas obslou¾eny, docházelo by v~obraze k~artefaktùm (poruchám).
+
+Obvod SIMI DMA má vy¹¹í prioritu ne¾ procesor. Pokud toti¾ procesor vydá pøíkaz pøenést urèitý blok pamìti, musí být akce okam¾itì provedena, aby následující instrukce procesoru ji¾ pracovala s~aktualizovanou pamìtí.
+
+Obsluha po¾adavkù a generování signálù pro øadiè pamìti jsou øe¹eny pomocí automatu \texttt{FSM\_SDRAM}. Po resetu automat pøejde do stavu S\_WAIT, ve kterém èeká na jakýkoliv po¾adavek. Pokud SDRAM pracuje (signál \texttt{BUSY}=1), pak v~tomto stavu automat setrvává tak dlouho, dokud se pamì» neuvolní. Teprve pak mù¾e zaèít obsluha dal¹ího po¾adavku.
+
+\subsubsection{Refresh pamìti}
+V~kapitole \ref{res:GPU} bylo vysvìtleno, ¾e bìhem vykreslování horizontálního okraje má signál \texttt{REFRESH} hodnotu log. 1. Tento signál je vzorkován a pøi detekci jeho nástupné hrany je do registru \texttt{GPU\_REFRESH\_EN} ulo¾ena log. 1. Ta indikuje po¾adavek na obnovu pamìti.
+
+Po vyøízení po¾adavku na obnovu pamìti automatem \texttt{FSM\_SDRAM} je registr resetován.
+
+\subsubsection{Grafická jednotka}
+Grafická jednotka dr¾í bìhem po¾adavku na ètení na svém výstupu \texttt{READ\_EN} hodnotu log.~1 tak dlouho, dokud není její po¾adavek obslou¾en a potvrzen signálem \texttt{DATA\_IN\_VLD}.
+
+\subsubsection{Procesor T80}
+Pokud procesor potøebuje pøistoupit k~pamìti (\texttt{MREQ\_n}=0), zapí¹e se do registru \texttt{SDRAM\_WAIT\_n} hodnota log. 0. Tento registr je pøiveden na vstup \texttt{WAIT\_n} procesoru, který pozastaví provádìní zápisu nebo ètení, dokud se \texttt{WAIT\_n} nevrátí zpìt do log. 1. Pøesný prùbìh èasování je na obrázku \ref{img:z80mem}. Pamì» tak má dostatek èasu na vyøízení jeho ¾ádosti.
+
+Samotný po¾adavek ètení/zápisu procesoru (signály \texttt{RD\_n}/\texttt{WR\_n}) je vzorkován a pøi sestupné hranì signálu je ulo¾en do registru \texttt{T80\_READ\_EN\_REG} nebo \texttt{T80\_WRITE\_EN\_REG}. Automat \texttt{FSM\_SDRAM} po vyøízení ¾ádosti signál vyresetuje a mù¾e zaèít obsluhovat dal¹í ¾ádosti.
+
+Proto¾e procesor pracuje na mnohem ni¾¹í frekvenci ne¾ pamì», ukládá se výsledek ètení z~pamìti do pomocného registru \texttt{T80\_DATA\_IN\_MREQ}. Pamì» díky tomu mù¾e zaèít okam¾itì obsluhovat dal¹í po¾adavek a data pro procesor pøesto zùstanou platná.
+
+%==============================================================================
+\chapter{Softwarové øe¹ení}\label{ch:swreseni}
+Tato kapitola se zabývá softwarovým øe¹ením emulátoru ZX Spectrum. V~první fázi bylo nutné upravit standardní ROM poèítaèe ZX Spectrum 128K. Tato úprava je popsána v~kapitole \ref{sec:upravaROM}. Aby bylo mo¾né pracovat s~SD/MMC pamì»ovou kartou, naprogramoval jsem vlastní operaèní systém ZX Simi OS, který je popsán v~kapitole \ref{sec:zxsimi}
+
+\section{Úprava standardní ROM ZX Spectrum 128K}\label{sec:upravaROM}
+Standardní ROM poèítaèe ZX Spectrum umo¾òuje naèítat data z~magnetofonu. Po zadání pøíkazu LOAD se spustí obslu¾ná rutina, která vzorkuje magnetofonový vstup, pøevádí posloupnost bitù na bajty a ty následnì dále zpracovává. Proto¾e jsem magnetofon nahradil pamì»ovou kartou, bylo nutné tuto obslu¾nou rutinu upravit.
+
+LOAD rutina se nachází v~pamìti ROM1, která obsahuje pùvodní BASIC 48K (viz kap. \ref{sec:RAMhier}). Pøi úpravì jsem vycházel z~disassemblované verze ROM \cite{disassembly}.
+
+Rutina LOAD zaèíná od adresy 0x556. Její výpis je v~pøíloze \ref{pri:load}. Èervenou barvou jsou oznaèeny instrukce, které je nutné vymazat a nahradit je instrukcí NOP (No Operation). Vìt¹ina funkcí v~rutinì se toti¾ vìnuje pøevodu zvukového signálu z~magnetofonu na posloupnost bitù.
+
+Funkce LD-8BITS skládá posloupnost osmi bitù do bajtu, který se následnì ukládá do pamìti. Proto je nutné pøeprogramovat právì tuto funkci. Ihned na její zaèátek (adresa 0x05CA) se vlo¾í následující kód:
+
+\begin{verbatim}
+LD A,0          ; 0x3E 0x00
+IN A,(0xF3)     ; 0xDB 0xF3
+LD L,A          ; 0x6F
+\end{verbatim}
+
+První instrukce nastaví horní èást I/O adresy na hodnotu 0. Druhá instrukce pøeète ze SIMI DMA øadièe (I/O adresa 0x00F3) bajt dat, který pøedstavuje ètená magnetofonová data. Poslední instrukce ulo¾í naètený bajt z~registru A~do registru L a ten je pak dále zpracován zbytkem obslu¾né rutiny.
+
+Tato úprava tedy k~naèítání dat vyu¾ívá SIMI DMA øadiè, který musí být pøed zavoláním rutiny LOAD správnì nakonfigurován. O~to se stará operaèní systém ZX Simi OS. Ten nejprve naète data z~SD karty do pamìti a následnì nakonfiguruje SIMI DMA øadiè tak, aby na tato data v~pamìti ukazoval. Pokud pak u¾ivatel v~BASICu spustí pøíkaz LOAD, magnetofonová data se správnì ètou ze zadané pozice v~pamìti a ne z~magnetofonu.
+
+\section{Operaèní systém ZX Simi OS}\label{sec:zxsimi}
+
+Ukázka a návod k ovládání je v pøíloze \ref{pri:zxsimios}.
+
+\subsection{Knihovna s~abstraktní vrstvou nad souborovým systémem}
+Proto¾e základní funkcí ZX Simi OS je práce se soubory, vytvoøil jsem abstraktní knihovnu filesystem.c, která dovoluje ètení adresáøù a souborù nezávisle na pou¾itém operaèním systému. V~souèasnosti je podporován pouze souborový systém FAT32 popsaný v~kapitole \ref{sec:swfat32}, knihovnu v¹ak lze snadno roz¹íøit o~ostatní souborové systémy.
+
+V~hlavièkovém souboru je definována struktura \texttt{tFileSystemDir}, která udr¾uje v¹echny dùle¾ité informace o~aktuálním adresáøi, jako je napø. èíslo clusteru a velikost. Dále obsahuje seznam souborù a slo¾ek v~adresáøi. Ka¾dý záznam je reprezentován datovou strukturou \texttt{tFileSystemDirEntry}, která obsahuje ve¹keré podstatné informace o~souboru/adresáøi, napø. èíslo clusteru, jméno (pøípadnì dlouhé jméno) pøípona, velikost apod.
+
+Dal¹í dùle¾itou strukturou je \texttt{tPartitionTableEntry}, ve které je ulo¾ena informace o~diskovém oddílu (partition). Tato struktura se naplní pomocí funkce: 
+
+\begin{itemize}
+\item\texttt{errc fsStart(tFileSystemDir *dir)}.
+
+Nastaví promìnnou \texttt{dir} typu \texttt{tFileSystemDir}, do které ulo¾í informaci o~koøenovém adresáøi (èíslo clusteru, velikost a prvních FS\_DIR\_SIZE souborù a slo¾ek v~adresáøi).
+\end{itemize}
+
+Proto¾e je pamì» poèítaèe velice malá, není mo¾né do pamìti ukládat kompletní výpis adresáøe. Maximální velikost naèteného seznamu souborù a adresáøù je omezena konstantou FS\_DIR\_SIZE, která má hodnotu 22. Funkce pro získání seznamu souborù a adresáøù má proto mo¾nost zadat offset (posunutí), od kterého chce výpis získat.
+
+\begin{itemize}
+\item\texttt{errc fsDir(unsigned int pos, tFileSystemDir *dir);}
+
+Tato funkce získá èást seznamu souborù a adresáøù v~daném adresáøi. Promìnná \texttt{pos} udává offset (posunutí), neboli kolik záznamù má být pøeskoèeno. V~promìnné \texttt{dir} je vrácen naètený obsah adresáøe.
+
+\item\texttt{errc fsReadFile(unsigned long fileCluster, unsigned long sectorNumber,\\unsigned char *data);}
+
+Pøeète jeden sektor ze souboru a vrátí ho v~poli \texttt{data}. Promìnná \texttt{fileCluster} udává èíslo clusteru, na kterém soubor zaèíná. Promìnnou \texttt{sectorNumber} se udává èíslo sektoru, který chceme pøeèíst.
+\end{itemize}
+
+
+
+
+\subsection{Knihovna pro práci se souborovým systém FAT32}\label{sec:swfat32}
+Operaèní systém podporuje pamì»ové karty se souborovým systémem FAT32, který je ¹iroce roz¹íøen a podporován témìø v¹emi platformami. Jeho implementace je snadná a proto i vhodná pro malé vestavìné systémy, jakým je i tento emulátor. Vznikl jako roz¹íøení souborového systému FAT16. Podporuje disky o~kapacitì a¾ 16 TB, dlouhé názvy souborù, neomezený poèet souborù v~adresáøích atd.
+
+Z~úsporných dùvodù zde nebudu souborový systém popisovat. Implementace vychází ze specifikace \cite{FAT32} a nachází se v~knihovnì fat32.c.
+
+Struktura \texttt{tFAT32BootSector} definovaná v~hlavièkovém souboru fat32.h slou¾í pro uchování ve¹kerých dùle¾itých informací o~souborovém systému, jako jsou poèet sektorù na cluster, poèet sectorù v~partition, èíslo prvního clusteru apod. Tuto strukturu je nutné pøed prvním pou¾itím naplnit pomocí funkce \texttt{FAT32readBootSector}. V¹echny ostatní funkce tuto strukturu vyu¾ívají ke své èinnosti.
+
+\begin{itemize}
+\item\texttt{errc FAT32getNextAddrOfCluster(tFAT32BootSector *bootSector,\\unsigned long addr, unsigned long *next)}
+
+Funkce pro zadané èíslo clusteru zjistí jeho následující cluster. Parametr \texttt{addr} udává èíslo clusteru, pro který chceme zjistit jeho následníka, parametr \texttt{*next} je reference na promìnnou, do které bude èíslo následníka ulo¾eno.
+
+\item\texttt{errc FAT32readDir(tFAT32BootSector *bootSector, unsigned int pos,\\tFileSystemDir *dir);}
+
+Pøeète obsah adresáøe. Proto¾e poèet polo¾ek v~adresáøi není nijak omezen, mù¾e být vrácený výsledek pøíli¹ velký a neve¹el by se do pamìti. Proto je poèet vrácených polo¾ek omezen konstantou \texttt{FS\_DIR\_SIZE} definovanou v~souboru filesystem.h. Parametr \texttt{pos} udává èíslo souboru/adresáøe ve FAT tabulce, od kterého chci získat výpis. Výsledek se ulo¾í do pole \texttt{dir}. Soubory ani adresáøe nejsou ve FAT tabulce nikterak seøazeny. Poøadové èíslo tedy odpovídá skuteènému umístìní záznamu ve FAT tabulce.
+
+\item\texttt{errc FAT32readFile(tFAT32BootSector *bootSector,\\unsigned long firstCluster, unsigned int sectorNumber,\\unsigned char *data);}
+
+Pøeète jeden sektor souboru. Promìnná \texttt{firstCluster} udává èíslo prvního clusteru, na kterém soubor zaèíná, parametrem \texttt{sectorNumber} lze zvolit, kolikátý sektor souboru chceme naèíst. Pomocí FAT tabulky se zjistí fyzické umístìní sektoru na disku a jeho obsah je vrácen v~poli \texttt{data}.
+\end{itemize}
+
+Knihovna FAT32 ke své èinnosti vyu¾ívá knihovnu sdcard.c, pomocí které pøistupuje k~SD pamì»ové kartì. Knihovna je vysvìtlena v~kapitole \ref{sec:zxsimiSDcard}.
+
+\subsection{Knihovna pro práci s~SD/MMC kartou}\label{sec:zxsimiSDcard}
+Tato knihovna komunikuje s~SD/MMC øadièem popsaným v~kapitole \ref{sec:sdradic}. Bázová adresa øadièe SD\_ADDR=0xF7 je definována v~hlavièkovém souboru sdcard.h.
+
+Knihovna poskytuje pouze jedinou funkci, která z~SD/MMC karty pøeète jeden sektor zadaný jeho adresou ulo¾enou v~promìnné \texttt{sector}. Pøeètený sektor je navrácen v~poli \texttt{data}. Prototyp funkce je následující:
+
+\begin{itemize}
+\item\texttt{errc sdReadSector(unsigned long sector,unsigned char *data);}
+\end{itemize}
+
+Funkce ode¹le SD kartì pøíkaz CMD17 (ètení sektoru) s~adresou sektoru, poté softwarovou smyèkou èeká na pøijetí startovacího tokenu 0xFE, který oznaèuje zaèátek dat. V~tuto chvíli je SD/MMC øadiè pøipraven odesílat data. Pro zrychlení pøenosu se celý sektor pøenese do pamìti pomocí SIMI DMA øadièe. Funkce sdReadSector nastaví SIMI DMA øadiè tak, aby data èetl z~I/O rozhraní SD/MMC øadièe a data zapisoval do pamìti (viz kap. \ref{sec:zxsimismdma}). Poté nastaví délku dat na 512 bajtù (celý sektor), èím¾ se odstartuje DMA pøenos.
+
+
+
+\subsection{Knihovna pro práci se SIMI DMA øadièem}\label{sec:zxsimismdma}
+Architektura SIMI DMA øadièe byla popsána v~kapitole \ref{sec:hwsmdma}. Knihovna dma.c slou¾í pro ovládání SIMI DMA øadièe procesorem. V~hlavièkovém souboru dma.h je definována bázová I/O adresa øadièe DMA\_BASE\_ADDR=0xF3 a funkce pro ovládání øadièe:
+
+\begin{itemize}
+\item\texttt{void dmaSetDestAddr(unsigned long addr);}
+
+Nastaví cílovou fyzickou adresu.
+
+\item\texttt{void dmaSetSrcAddr(unsigned long addr);}
+
+Nastaví zdrojovou fyzickou adresu.
+
+\item\texttt{void dmaSetConfig(unsigned char conf);}
+Nastavení parametrù pøenosu. Ve výchozím stavu (\texttt{conf}=0) je øadiè nastaven tak, ¾e zdrojová i cílová adresa vyu¾ívá pamì»ový prostor a registry s~cílovou a zdrojovou adresou nejsou bìhem pøenosu inkrementovány. Pomocí následujících pøíznakù lze toto chování zmìnit:
+\begin{itemize}
+\item\texttt{DMA\_INC\_DST} - Inkrementace cílové adresy po ka¾dém zapsaném bajtu.
+\item\texttt{DMA\_IORQ\_DST} - Zapisovat data do I/O adresového prostoru.
+\item\texttt{DMA\_INC\_SRC} - Inkrementace zdrojové adresy po ka¾dém pøeèteném bajtu.
+\item\texttt{DMA\_IORQ\_SRC} - Èíst data z~I/O adresového prostoru (napø. SD/MMC øadiè).
+\end{itemize}
+
+\item\texttt{void dmaTransfer(unsigned int length);}
+
+Odstartuje pøenos bloku dat o~velikosti \texttt{length} ze zdrojové adresy do cílové adresy.
+
+\item\texttt{unsigned char dmaReadByte();}
+
+Pøeète jeden bajt ze zdrojové adresy.
+
+\item\texttt{void dmaSendByte(unsigned char byte);}
+
+Ulo¾í jeden bajt \texttt{byte} do cílové adresy.
+\end{itemize}
+
+
+
+
+\subsection{Naèítání a spou¹tìní aplikací z~SD/MMC karty}\label{sec:zxnacitani}
+Tato kapitola popisuje princip naèítání a spou¹tìní aplikací ze souborù ulo¾ených na pamì»ové kartì. Existuje velké mno¾ství rùzných formátù pro ulo¾ení aplikací a dat pro ZX Spectrum, nejpou¾ívanìj¹í jsou zøejmì formáty SNA, Z80, TAP a TZX, které podporuje i operaèní systém ZX Simi OS. Strukturu formátù zde z~prostorových dùvodù nebudu uvádìt, podrobnou specifikaci nalezne ètenáø napø. v~\cite{formaty}.
+
+Proto¾e poèítaèe ZX Spectrum standardnì naèítají data z~magnetofonové pásky, nejpøirozenìj¹ím formátem pro ulo¾ení dat na klasickém PC je obraz magnetofonové pásky ve formátu TAP nebo TZX. Naprostá vìt¹ina aplikací na internetu je ulo¾ena právì v~tomto formátu. Druhý zpùsob, jak aplikace a data ulo¾it, je pomocí obrazu pamìti. Pøíkladem jsou formáty SNA a Z80.
+
+Aby bylo mo¾né aplikace spou¹tìt, musel jsem vytvoøit pomocnou knihovnu task.c, která umo¾òuje za bìhu vygenerovat assemblerový (respektive binární) kód, ulo¾it jej do pamìti a následnì jej procesorem provést. Tato funkce se pou¾ívá ke spou¹tìní obrazù pamìti (SNA, Z80). Ka¾dý soubor v~sobì toti¾ kromì obrazu pamìti obsahuje také obraz v¹ech registrù procesoru. Operaèní systém bìhem naèítání souboru vygeneruje patøièný binární kód, který má za cíl naplnit registry procesoru správnými hodnotami.
+
+V~kapitole \ref{sec:hwtask} byl popsán speciální obvod, který zaji¹»uje korektní pøepnutí pamì»ových prostorù z~pamìti operaèního systému ZX Simi OS na pamì» spou¹tìné aplikace. Knihovna task.c podporuje zápis do registrù tohoto obvodu.
+
+\subsubsection{Formát SNA}
+Prvních 27 bajtù v~obrazu obsahuje obsah v¹ech registrù procesoru. Bìhem naèítání se do libovolného volného místa v~pamìti pomocí knihovny task.c vygeneruje binární kód, po jeho¾ provedení se inicializují v¹echny registry. Pøed jeho provedením se v¹ak nejprve nakopíruje zbytek souboru obrazu pamìti do pamìti RAM aplikace, která zaèíná od fyzické adresy 0x040000, poté se nastaví registr \texttt{TASK\_ADDR} z~kapitoly \ref{sec:hwtask} tak, aby ukazoval za poslední instrukci vygenerovanou knihovnou task.c, inicializuje se pomocný registr \texttt{TASK\_7FFD} hodnotou z~obrazu a povolí se èinnost pøepínacího obvodu pomocí registru \texttt{TASK\_CMD}. V~tuto chvíli je poèítaè pøipraven ke spu¹tìní aplikace. Provedením vygenerovaného kódu se inicializují v¹echny registry, HW obvod rozpozná dokonèení inicializace a pøemapuje aktivní pamì» RAM na adresu 0x040000.
+
+Poslední vygenerovanou instrukcí je v¾dy skok na adresu, èím¾ se provede inicializace registru Program Counter. Aplikace díky tomu mù¾e zaèít pøesnì od místa, kde byl obraz ulo¾en.
+
+Pro urychlení naèítání se obraz pamìti naèítá z~karty pomoci SIMI DMA øadièe.
+
+\subsubsection{Formát Z80}
+Naètení souboru Z80 je velice podobné souboru SNA. Tento formát je v¹ak v~mnoha ohledech sofistikovanìj¹í. Existuje nìkolik verzí, které jsou v¹ak na¹tìstí zpìtnì kompatibilní. Zøejmì nejvýraznìj¹í zmìnou je podpora komprese souboru pomocí RLE (Run-length Encoding). Kvùli ní v¹ak není mo¾né obraz kopírovat pomocí SIMI DMA øadièe, ale je nutné obraz naèítat a dekomprimovat softwarovì, co¾ je výraznì pomalej¹í.
+
+
+\subsubsection{Formát TAP}
+Ji¾ jsme si vysvìtlili, ¾e formát TAP není obraz pamìti poèítaèe, ale obraz magnetofonové pásky a je proto nutné naèítat jej zcela jiným zpùsobem, ne¾ formáty SNA a Z80.
+
+Nejprve se pomocí SIMI DMA øadièe pøenese soubor z~SD/MMC karty do volného místa v~SDRAM pamìti, konkrétnì na adresu 0x80000, která je zcela prázdná a k~nièemu se nevyu¾ívá. Pomocí knihovny task.c se vygeneruje kratièký kód, který pouze nastaví registr PC (Program Counter) procesoru na hodnotu 0, èím¾ dojde k~softwarovému resetu procesoru. Pøi nìm se opìt spustí upravená ROM ZX Spectrum 128K, popsaná v~kapitole \ref{sec:upravaROM}. 
+
+V~tuto chvíli ji¾ staèí v~BASICu spustit pøíkaz LOAD, který zajistí korektní naètení magnetofonových dat z~adresy 0x080000.
+
+\subsubsection{Formát TZX}
+Naètení formátu TZX je témìø stejné jako u~TAP. Li¹í se pouze vnitøní struktura souboru, která v~sobì obsahuje nejen TAP data, ale i dal¹í informace související s~frekvencí tónu na kazetì, délkou pulzù a pod. Tyto informace je nutné bìhem naèítání pøeskoèit.
+
+
+%==============================================================================
+\chapter{Výsledná fyzická realizace}\label{ch:fyzreal}
+V~kapitole \ref{ch:navrh} jsem vysvìtlil, proè jsem se pro implementaci rozhodl vyu¾ít vývojový kit FITkit. Po ovìøení funkènosti na platformì FITkit jsem se ale rozhodl, ¾e pro emulátor vytvoøím vlastní plo¹ný spoj, který bude pokud mo¾no co nejmen¹í a nejjednodu¹¹í a bude obsahovat v¹echny potøebné konektory pro pøipojení periferií. Osazený plo¹ný spoj je na obrázku \ref{img:plosnakZXSimi}.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.3]{img/plosnak_small.jpg}
+  \caption{Plo¹ný spoj emulátoru ZX Simi}
+  \label{img:plosnakZXSimi}
+\end{figure}
+
+
+Pøi návrhu vlastního zapojení jsem vycházel ze schéma FITkitu \cite{FITkit}. Z~nìj jsem pøevzal pøedev¹ím zapojení stabilizátorù napìtí $3,3 V$ a $1,2 V$. Pou¾il jsem v¹ak jiný typ FPGA, konkrétnì Spartan XC3S400AN-FGG400 \cite{xc3s400an}, proto¾e toto FPGA v~sobì obsahuje FLASH pamì» pro ulo¾ení konfiguraèního øetìzce pro FPGA. Flash pamì» je navíc natolik veliká, ¾e je do ní mo¾né ulo¾it i u¾ivatelská data. Díky tomu není nutné pou¾ívat externí FLASH pamì».
+
+Celé schéma se nachází v~pøíloze \ref{pri:schema}. Kvùli pou¾itému FPGA, které má BGA pouzdro se 400 piny, bylo nutné pou¾ít ètyøvrstvý plo¹ný spoj. Spodní vrstva je pou¾ita k~rozvodu GND signálu. Horní vrstva obsahuje datové vodièe a SMD souèástky. Vnitøní vrstvy slou¾í pro rozvod napájecího napìtí a dal¹ích datových vodièù.
+
+Pro mo¾nost budoucího roz¹iøování emulátoru jsem z~FPGA vyvedl 40 univerzálních I/O pinù na externí konektor P\_X1. Lze je vyu¾ít napø. k~pøipojení joysticku èi jiných periferií. Na konektoru P\_X2 jsou vyvedena napájecí napìtí $5V$ a $3,3V$ a také GND.
+
+FPGA se programuje pomocí JTAG rozhraní vyvedeného na konektor P1. Na desce se také nachází tlaèítko B0 pro RESET a dále univerzální tlaèítko B1, které bylo pùvodnì zamý¹leno pro nemaskovatelné pøeru¹ení NMI, ale v~souèasné chvíli není vyu¾íváno a jeho funkce tedy mù¾e být v~budoucnu jiná.
+
+Hodinový kmitoèet pro FPGA se generuje pomocí oscilátoru s~frekvencí $7,372 MHz$. Z~tohoto kmitoètu se pomocí DCM obvodu v~FPGA generuje vnitøní kmitoèet 50MHz, který se pou¾ívá jako hodinový kmitoèet celého emulátoru.
+
+Napájecí napìtí 5V, které se pou¾ívá jako napájení napø. pro PS2 periferie, je pøivedeno pøímo ze vstupu a není nijak stabilizováno. Celé zaøízení proto musí být napájeno pøesnì 5 volty. Pøi nedodr¾ení mù¾e dojít k~po¹kození, pøípadnì nesprávnému chování. To je bohu¾el znaèná nevýhoda tohoto zapojení. Praktiètìj¹í by bylo mít stabilizované i napìtí 5V.
+
+Dal¹í drobnou chybou zapojení jsou chybìjící filtraèní kondenzátory u~FPGA. Plo¹ný spoj sice funguje správnì i bez nich, ale jistì by bylo vhodnìj¹í tyto kondenzátory zapojit.
+
+%============================
+\section{Externí pamì» FLASH}\label{sec:extflash}
+
+Po otestování osazeného plo¹ného spoje jsem zjistil, ¾e pro ulo¾ení operaèního systému ZX Simi OS a ZX Spectrum 128K ROM nemohu vyu¾ít vnitøní FLASH pamì» v~FPGA. Programovací software Xilinx Impact toti¾ z~nepochopitelného dùvodu bìhem programování v¾dy zamrzne a FPGA se nepodaøí naprogramovat. Zøejmì se jedná o~chybu v aplikaci Xilinx Impact. Toto chybu jsem nahlásil na oficiální podpoøe firmy Xilinx, ale doposud jsem neobdr¾el ¾ádnou odpovìï. K~chybì dochází na v¹ech testovaných operaèních systémech (Windows 7, XP, Linux) i na rùzných verzích aplikace Xilinx Impact (13.4, 12.1).
+
+Z~tohoto dùvodu jsem byl nucen pou¾ít externí pamì» FLASH AT45DB041D, kterou jsem pøipojil do konektoru P\_X1. Jedná se o~4Mbit FLASH pamì», které pracuje na frekvenci a¾ 66MHz. S~pamìtí se komunikuje pomocí SPI rozhraní (viz napø. kap. \ref{sec:spi}).
+
+Upravená ROM ZX Spectrum 128K je ulo¾ena od adresy 0 a její velikost je 128K. Ihned za ní je v~pamìti ulo¾en operaèní systém ZX Simi OS ve formátu TAP. Po spu¹tìní emulátoru se pomocí komponenty \texttt{FLASH\_EXT} z~FLASH pamìti naète ROM ZX Spectrum 128K a ulo¾í se do SDRAM pamìti na fyzickou adresu 0. Dále se z~FLASH pamìti naète ZX Simi OS a ulo¾í se do SDRAM pamìti ihned za naètenou ROM (0x8000) Na tuto adresu je po resetu také nastaven obvod SIMI DMA.
+
+Podívejme se nyní na rozhraní obvodu \texttt{FLASH\_EXT}:
+
+\begin{verbatim}
+entity FLASH_EXT is
+    port (
+        CLK      : in  STD_LOGIC;
+        RESET    : in  STD_LOGIC;
+        WAIT_n   : out std_logic;
+        -- externi FLASH
+        MISO     : in std_logic;
+        MOSI     : out std_logic;
+        CSB      : out std_logic;
+        SCLK     : out std_logic;
+        -- rozhrani po komunikaci s~pameti
+        DATA_OUT : out  STD_LOGIC_VECTOR (7 downto 0);
+        ADDR     : out  STD_LOGIC_VECTOR (22 downto 0);
+        WR       : out  STD_LOGIC;
+        ACK      : in   STD_LOGIC
+    );
+end FLASH_EXT;
+\end{verbatim}
+
+Pomocí signálu \texttt{WAIT\_n} se pozastavuje èinnost procesoru. Obvod díky tomu mù¾e procesor pozastavit do té doby, ne¾ do pamìti ulo¾í ROM ZX Spectrum 128K a operaèní systém ZX Simi OS.
+
+Komunikace s~externí FLASH pamìtí probíhá pomocí signálù \texttt{MISO}, \texttt{MOSI}, \texttt{CSB} a \texttt{SCLK}, co¾ jsou standardní signály SPI rozhraní. Dále je obvod pøipojen k~pamìti SDRAM pomocí signálù \texttt{DATA\_OUT}, \texttt{ADDR}, \texttt{WR} a \texttt{ACK}.
+
+Obvod je øízen pomocí koneèného automatu. Nejdøíve se do FLASH pamìti ode¹le pøíkaz ètení z~adresy 0: 0x0B, 0x00, 0x00, 0x00. Po odeslání pøíkazu se z~FLASH pøeète jeden \uv{don't care} bajt a po nìm ji¾ následuje sekvence ètených bajtù. Ty se postupnì ukládají do SDRAM pamìti od adresy 0.
+
+
+
+%============================
+\section{Spu¹tìní a ovládání emulátoru}
+Jak tedy probíhá spu¹tìní celého emulátoru? Obvod \texttt{FLASH\_EXT} po resetu pozastaví èinnost procesoru signálem \texttt{WAIT\_n}. Následnì z~FLASH pamìti pøeète ROM ZX Spectrum 128K a ulo¾í ji do SDRAM pamìti na adresu 0x020000. Na adresu 0x0x028000 ulo¾í TAP obraz operaèního systému ZX Simi OS. Po dokonèení naèítání je zru¹en signál \texttt{WAIT\_n}, èím¾ se opìt povolí èinnost procesoru T80, který spustí BASIC.
+
+V~tuto chvíli je ji¾ mo¾né s~poèítaèem normálním zpùsobem pracovat. Pokud u¾ivatel zadá v~BASICu pøíkaz LOAD, spustí se operaèní systém ZX Simi OS, který je ulo¾ený v~SDRAM pamìti ve formátu TAP a obslu¾ná rutina v~ROM jej naète a spustí jako klasickou u¾ivatelskou aplikaci z~magnetofonu. Tento princip byl vysvìtlen v~kapitole \ref{sec:upravaROM}.
+
+Pomocí operaèního systému ZX Simi OS je mo¾né spou¹tìt aplikace z~SD/MMC pamì»ové karty. Systém byl popsán v~kapitole \ref{sec:zxsimi}.
+
+%==============================================================================
+\chapter{Ovìøení funkènosti emulátoru}\label{ch:testovani}
+Abych ovìøil funkènost celého emulátoru, pou¾il jsem k~jeho otestování dobové aplikace a pøedev¹ím hry. Pøedev¹ím hry jsou pro testování ideální, proto¾e vyu¾ívali ve¹keré mo¾nosti poèítaèe \uv{nadoraz}. Vzhledem k~tomu, ¾e jsou jich stovky, není pochopitelnì v~mých silách ovìøit funkènost v¹ech. Vybral jsem si proto k~otestování jen jejich malou podmno¾inu, pøedev¹ím mé oblíbené hry.
+
+Základní funkènost celého zaøízení je zøejmá ji¾ z~toho, ¾e poèítaè doká¾e spustit modifikovanou ROM ZX Spectrum 128KB a následnì naèíst a spustit operaèní systém ZX Simi OS. Vzhledem k~tomu, ¾e operaèní systém správnì zobrazuje obsah souborù a slo¾ek na kartì a správnì spou¹tí aplikace, pova¾uji i jeho implementaci za správnou.
+
+Z~testovaných her zmiòme napø. hry Dizzy 1-9, Batman 1, Jetpack, The Simpsons, Boulderdas, Cauldron 1-2, Bionic Commando, F-19, Golden Axe, Pacmania, Indy 1-4, The Race Against Time, Rampage, Mortal Kombat a mnoho dal¹ích. Funkènost Kempston my¹i jsem provìøil na hrách Simcity, Wolfenstein, Lemmings, Ikari Warriors, Carrier Command a Arkanoid 2. 
+
+Bohu¾el jsem v¹ak narazil i na nefunkèní hry. Napø: Arkanoid 1, Batman 3, Prince of Persia, Space Crusader. Konkrétnì u~hry Arkanoid jsem se doèetl, ¾e ète z~nedefinovaných I/O portù, èím¾ zøejmì naèítá náhodná data ze sbìrnice. Vzhledem k~tomu, ¾e toto chování není nijak specifikované, nepodaøilo se mi tuto hru zprovoznit.
+
+Tehdej¹í hry se z~dùvodu vy¹¹í rychlosti èasto programovaly pøímo v~assembleru a programátoøi se sna¾ili vyu¾ít ve¹keré mo¾nosti tehdej¹ích poèítaèù - jeho zdokumentované chování, ale i to nezdokumentované èi dokonce jeho chyby. Domnívám se, ¾e právì to je dùvodem, proè nìkteré hry nefungují správnì.
+
+Konkrétnì hra Arkanoid 1 ze stejného dùvodu nefunguje ani na originálním ZX Spectrum 2+, co¾ je dùkaz, ¾e nìkteré hry opravdu byly ¹ité pøímo na míru danému poèítaèi.
+
+V~celkovém mìøítku v¹ak vìt¹ina her funguje správnì a proto pova¾uji emulátor za funkèní.
+
+%==============================================================================
+\chapter{Závìr}
+
+Cílem práce bylo navrhnout a implementovat pomocí technologie FPGA emulátor poèítaèe ZX Spectrum 48K. V~úvodu práce jsem ètenáøe seznámil s~poèítaèi ZX Spectrum - jejich historií, verzemi poèítaèù a jejich vnitøní architektuøe.
+
+K~implementaci emulátoru jsem mohl vyu¾ít libovolný vývojový kit dostupný na ¹kole. Rozhodl jsem se pro platformu FITkit, se kterou jsem mìl dobré zku¹enosti z~pøede¹lého studia.
+
+Zadání práce jsem si znaèným zpùsobem roz¹íøil. V~první øadì jsem se rozhodl vytvoøit emulátor poèítaèe ZX Spectrum 128K, který je s~poèítaèem ZX Spectrum 48K zpìtnì kompatibilní, av¹ak pøiná¹í velké mno¾ství zásadních zmìn - pøedev¹ím roz¹íøení pamìti ROM i RAM a s~tím související zmìny. Mimo jiné pou¾ívá i 3-kanálový zvukový generátor AY-3-8912, který jsem v¹ak z~dùvodu zjednodu¹ení neimplementoval.
+
+Po ovìøení funkènosti emulátoru na platformì FITkit jsem nad rámec zadání navrhl vlastní plo¹ný spoj, který je \uv{¹itý na míru} emulátoru - obsahuje ve¹keré potøebné konektory pro pøipojení periferií a dovoluje pou¾ívat emulátor i bez pøítomnosti poèítaèe, který by jej napøíklad musel po zapnutí naprogramovat.
+
+Plo¹ný spoj jsem navrhl tak, aby bylo do budoucna mo¾né roz¹iøovat funkce emulátoru pøipojením dal¹ích periferií k~FPGA pomocí roz¹iøujícího portu. Toho by se dalo vyu¾ít napø. pro pøipojení joysticku, externího zvukového generátoru AY-3-8912 apod. Vzhledem k tomu, ¾e je navr¾en univerzálnì, bylo by ho mo¾né pou¾ít k implementaci i dal¹ích osmibitových poèítaèù nebo zaøízení, jako je napø. Atari nebo GameBoy.
+
+Drobnou vadou na kráse navr¾eného plo¹ného spoje je, ¾e jsem nepou¾il stabilizátor napìtí na 5V, tak¾e je nutné celé zaøízení napájet ji¾ stabilizovaným napìtím 5V, jinak by mohlo dojít k~po¹kození PS/2 periferií.
+
+Aby bylo mo¾né v~emulátoru pøistupovat k~SD/MMC pamì»ovým kartám, musel jsem také naprogramovat vlastní operaèní systém ZX Simi OS, který v~souèasnosti podporuje souborový systém FAT32 a spou¹tìní aplikací ulo¾ených ve formátu SNA, Z80, TAP a TZX.
+
+Abych ovìøil funkènost celého emulátoru (plo¹ný spoj, HW emulátor v~FPGA a operaèní systém ZX Simi OS), otestoval jsem celou platformu pomocí dostupných dobových aplikací a her. Valná vìt¹ina aplikací funguje správnì. Vzhledem k~tomu, ¾e se tehdej¹í aplikace programovaly pøímo na míru poèítaèe (èasto pøímo v~assembleru) a programátoøi se sna¾ili vyu¾ít ka¾dou vlastnost poèítaèe (èasto i jeho nezdokumentované chování), existují i aplikace, které na mém emulátoru nefungují. Zmiòme napøíklad hru Arkanoid.
+
+I~pøes zmínìné problémy se mi v¹ak podaøilo vytvoøit funkèní hardwarový emulátor poèítaèe ZX Spectrum 128K a jeho funkènost nále¾itì otestovat na dobovém software.
+
+V~rámci dal¹ích bakaláøských a diplomových prací by bylo napøíklad mo¾né roz¹íøit funkce emulátoru o~podporu dal¹ích typù my¹í, joystickù, ji¾ zmínìného zvukového generátoru, pøípadnì pøidat podporu tzv. ULA+ módu, co¾ je roz¹íøení, které umo¾òuje na poèítaèi ZX Spectrum zobrazovat a¾ 64 barev. Také by bylo u¾iteèné pøidat podporu ukládání na SD/MMC kartu. To by znamenalo implementovat podporu zápisu na souborovém systému FAT32 v~operaèním systému ZX Simi OS a upravit obslu¾nou rutinu v~ROM ZX Spectrum. Plo¹ný spoj je navíc mo¾né pou¾ít jako výchozí platformu pro implementaci zcela jiných emulátorù (Atari, GameBoy...).

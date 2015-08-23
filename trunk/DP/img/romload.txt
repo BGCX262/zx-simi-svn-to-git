@@ -1,0 +1,149 @@
+;; LD-BYTES
+L0556:  INC     D               ; reset the zero flag without disturbing carry.
+        EX      AF,AF'          ; preserve entry flags.
+        DEC     D               ; restore high byte of length.
+        DI                      ; disable interrupts
+        LD      A,$0F           ; make the border white and mic off.
+        OUT     ($FE),A         ; output to port.
+        LD      HL,L053F        ; Address: SA/LD-RET
+        PUSH    HL              ; is saved on stack as terminating routine.
+        IN      A,($FE)         ; read the ear state - bit 6.
+        RRA                     ; rotate to bit 5.
+        AND     $20             ; isolate this bit.
+        OR      $02             ; combine with red border colour.
+        LD      C,A             ; and store initial state long-term in C.
+        CP      A               ; set the zero flag.
+
+;; LD-BREAK
+L056B:  RET     NZ              ; return if at any time space is pressed.
+
+;; LD-START
+L056C:  CALL    L05E7           ; routine LD-EDGE-1
+        JR      NC,L056B        ; back to LD-BREAK with time out and no edge present on tape.
+        LD      HL,$0415        ; set up 16-bit outer loop counter for approx 1 second delay.
+
+;; LD-WAIT
+L0574:  DJNZ    L0574           ; self loop to LD-WAIT (for 256 times)
+        DEC     HL              ; decrease outer loop counter.
+        LD      A,H             ; test for
+        OR      L               ; zero.
+        JR      NZ,L0574        ; back to LD-WAIT, if not zero, with zero in B.
+        CALL    L05E3           ; routine LD-EDGE-2
+        JR      NC,L056B        ; back to LD-BREAK if no edges at all.
+
+;; LD-LEADER
+L0580:  LD      B,$9C           ; set timing value.
+        CALL    L05E3           ; routine LD-EDGE-2
+        JR      NC,L056B        ; back to LD-BREAK if time-out
+        LD      A,$C6           ; two edges must be spaced apart.
+        CP      B               ; compare
+        JR      NC,L056C        ; back to LD-START if too close together for a lead-in.
+        INC     H               ; proceed to test 256 edged sample.
+        JR      NZ,L0580        ; back to LD-LEADER while more to do.
+
+;; LD-SYNC
+L058F:  LD      B,$C9           ; initial timing value in B.
+        CALL    L05E7           ; routine LD-EDGE-1
+        JR      NC,L056B        ; back to LD-BREAK with time-out.
+        LD      A,B             ; fetch augmented timing value from B.
+        CP      $D4             ; compare 
+        JR      NC,L058F        ; back to LD-SYNC if gap too big, that is, a normal lead-in edge gap.
+        CALL    L05E7           ; routine LD-EDGE-1
+        RET     NC              ; return with time-out.
+        LD      A,C             ; fetch long-term mask from C
+        XOR     $03             ; and make blue/yellow.
+        LD      C,A             ; store the new long-term byte.
+        LD      H,$00           ; set up parity byte as zero.
+        LD      B,$B0           ; timing.
+        JR      L05C8           ; forward to LD-MARKER 
+                                ; the loop mid entry point with the alternate 
+                                ; zero flag reset to indicate first byte 
+                                ; is discarded.
+
+;; LD-LOOP
+L05A9:  EX      AF,AF'          ; restore entry flags and type in A.
+        JR      NZ,L05B3        ; forward to LD-FLAG if awaiting initial flag which is to be discarded.
+        JR      NC,L05BD        ; forward to LD-VERIFY if not to be loaded.
+        LD      (IX+$00),L      ; place loaded byte at memory location.
+        JR      L05C2           ; forward to LD-NEXT
+
+;; LD-FLAG
+L05B3:  RL      C               ; preserve carry (verify) flag in long-term state byte. Bit 7 can be lost.
+        XOR     L               ; compare type in A with first byte in L.
+        RET     NZ              ; return if no match e.g. CODE vs DATA.
+        LD      A,C             ; fetch byte with stored carry
+        RRA                     ; rotate it to carry flag again
+        LD      C,A             ; restore long-term port state.
+        INC     DE              ; increment length ??
+        JR      L05C4           ; forward to LD-DEC.
+                                ; but why not to location after ?
+
+;; LD-VERIFY
+L05BD:  LD      A,(IX+$00)      ; fetch byte from memory.
+        XOR     L               ; compare with that on tape
+        RET     NZ              ; return if not zero. 
+
+;; LD-NEXT
+L05C2:  INC     IX              ; increment byte pointer.
+
+;; LD-DEC
+L05C4:  DEC     DE              ; decrement length.
+        EX      AF,AF'          ; store the flags.
+        LD      B,$B2           ; timing.
+
+;; LD-MARKER
+L05C8:  LD      L,$01           ; initialize as %00000001
+
+;; LD-8-BITS
+L05CA:  CALL    L05E3           ; routine LD-EDGE-2 increments B relative to gap between 2 edges.
+        RET     NC              ; return with time-out.
+        LD      A,$CB           ; the comparison byte.
+        CP      B               ; compare to incremented value of B.
+                                ; if B is higher then bit on tape was set.
+                                ; if <= then bit on tape is reset. 
+        RL      L               ; rotate the carry bit into L.
+        LD      B,$B0           ; reset the B timer byte.
+        JP      NC,L05CA        ; JUMP back to LD-8-BITS
+        LD      A,H             ; fetch the running parity byte.
+        XOR     L               ; include the new byte.
+        LD      H,A             ; and store back in parity register.
+        LD      A,D             ; check length of
+        OR      E               ; expected bytes.
+        JR      NZ,L05A9        ; back to LD-LOOP while there are more.
+        LD      A,H             ; fetch parity byte.
+        CP      $01             ; set carry if zero.
+        RET                     ; return in no carry then error as checksum disagrees.
+
+;; LD-EDGE-2
+L05E3:  CALL    L05E7           ; call routine LD-EDGE-1 below.
+        RET     NC              ; return if space pressed or time-out.
+                                ; else continue and look for another adjacent 
+                                ; edge which together represent a bit on the 
+                                ; tape.
+
+;; LD-EDGE-1
+L05E7:  LD      A,$16           ; a delay value of twenty two.
+
+;; LD-DELAY
+L05E9:  DEC     A               ; decrement counter
+        JR      NZ,L05E9        ; loop back to LD-DELAY 22 times.
+        AND      A              ; clear carry.
+
+;; LD-SAMPLE
+L05ED:  INC     B               ; increment the time-out counter.
+        RET     Z               ; return with failure when $FF passed.
+        LD      A,$7F           ; prepare to read keyboard and EAR port
+        IN      A,($FE)         ; row $7FFE. bit 6 is EAR, bit 0 is SPACE key.
+        RRA                     ; test outer key the space. (bit 6 moves to 5)
+        RET     NC              ; return if space pressed.  >>>
+        XOR     C               ; compare with initial long-term state.
+        AND     $20             ; isolate bit 5
+        JR      Z,L05ED         ; back to LD-SAMPLE if no edge.
+        LD      A,C             ; fetch comparison value.
+        CPL                     ; switch the bits
+        LD      C,A             ; and put back in C for long-term.
+        AND     $07             ; isolate new colour bits.
+        OR      $08             ; set bit 3 - MIC off.
+        OUT     ($FE),A         ; send to port to effect change of colour. 
+        SCF                     ; set carry flag signaling edge found within time allowed.
+        RET                     ; return.

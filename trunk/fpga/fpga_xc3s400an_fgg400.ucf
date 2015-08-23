@@ -1,0 +1,88 @@
+# CLK
+NET "SMCLK"    LOC = "A10"  | PERIOD=8 MHz HIGH 50%;
+
+# SDRAM
+NET "RA<0>"    LOC = "T2" ;
+NET "RA<1>"    LOC = "V2" ;
+NET "RA<2>"    LOC = "W1" ;
+NET "RA<3>"    LOC = "W2" ;
+NET "RA<4>"    LOC = "V1" ;
+NET "RA<5>"    LOC = "U1" ;
+NET "RA<6>"    LOC = "T1" ;
+NET "RA<7>"    LOC = "R1" ;
+NET "RA<8>"    LOC = "P1" ;
+NET "RA<9>"    LOC = "N1" ;
+NET "RA<10>"   LOC = "R2" ;
+NET "RA<11>"   LOC = "M1" ;
+NET "RA<12>"   LOC = "L1" ;
+NET "RA<13>"   LOC = "M2" ;
+NET "RA<14>"   LOC = "N2" ;
+
+NET "RD<0>"    LOC = "C2" ;
+NET "RD<1>"    LOC = "D2" ;
+NET "RD<2>"    LOC = "D3" ;
+NET "RD<3>"    LOC = "F2" ;
+NET "RD<4>"    LOC = "E1" ;
+NET "RD<5>"    LOC = "D1" ;
+NET "RD<6>"    LOC = "C1" ;
+NET "RD<7>"    LOC = "B1" ;
+
+NET "RDQM"     LOC = "F1" ;
+NET "RCS"      LOC = "L3" ;
+NET "RRAS"     LOC = "K2" ;
+NET "RCAS"     LOC = "J2" ;
+NET "RWE"      LOC = "H2" ;
+NET "RCLK"     LOC = "G1" ;
+NET "RCKE"     LOC = "J1" ;
+
+# VGA
+NET "BLUE_V<2>"   LOC = "J19" ;  # BLUE2
+NET "BLUE_V<1>"   LOC = "H20" ;  # BLUE1
+NET "BLUE_V<0>"   LOC = "H19" ;  # BLUE0
+NET "GREEN_V<2>"   LOC = "G20" ;  # GREEN2
+NET "GREEN_V<1>"   LOC = "F18" ;  # GREEN1
+NET "GREEN_V<0>"   LOC = "F20" ;  # GREEN0
+NET "RED_V<0>"   LOC = "E19" ;  # RED0
+NET "RED_V<1>"   LOC = "E20" ;  # RED1
+NET "RED_V<2>"   LOC = "F19" ;  # RED2
+NET "VSYNC_V"   LOC = "J20" ;  # VSYNC
+NET "HSYNC_V"   LOC = "K18" ;  # HSYNC
+
+# PS/2 Keyboard
+NET "K_DATA"   LOC = "M20" ;  # K_DATA
+NET "K_CLK"   LOC = "M19" ;  # K_CLK
+# PS/2 Mouse
+NET "M_DATA"   LOC = "L19" ;  # M_DATA
+NET "M_CLK"   LOC = "K20" ;  # M_CLK
+
+#SD Card
+NET "SD_CS"  LOC = "B19";
+NET "SD_CLK" LOC = "C19";
+NET "SD_MOSI" LOC = "B20";
+NET "SD_MISO" LOC = "C20";
+
+NET "SPEAK_OUT" LOC="D20";
+
+#X
+NET "X<1>"   LOC = "Y3";  # FLASH_SI
+NET "X<2>"   LOC = "Y2";  # FLASH_S0
+NET "X<3>"   LOC = "Y4";  # FLASH_CS
+NET "X<4>"   LOC = "W4";  # FLASH_SCK
+
+
+NET "X<7>"   LOC = "W8";
+NET "X<8>"   LOC = "Y7";
+
+NET "X<9>"   LOC = "Y9" ;  # KJ
+NET "X<10>"  LOC = "W9" ;  # KJ_
+NET "X<11>"  LOC = "U5" ;  # KJ_GND
+NET "X<12>"  LOC = "W10";  # KJ_UCC
+NET "X<13>"  LOC = "V7"  | PULLUP;  # KJ_BUTTON1
+NET "X<14>"  LOC = "V5"  | PULLUP;  # KJ
+NET "X<15>"  LOC = "V9"  | PULLUP;  # KJ_RIGHT
+NET "X<16>"  LOC = "V8"  | PULLUP;  # KJ_LEFT
+NET "X<17>"  LOC = "U10"  | PULLUP;  # KJ_DOWN
+NET "X<18>"  LOC = "V10"  | PULLUP;  # KJ_UP
+
+
+NET "X<39>"   LOC = "W18" | PULLUP;

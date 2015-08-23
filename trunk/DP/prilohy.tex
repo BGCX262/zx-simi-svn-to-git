@@ -1,0 +1,64 @@
+%\chapter{Obsah CD}
+%\chapter{Manual}
+%\chapter{Konfigraèní soubor}
+%\chapter{RelaxNG Schéma konfiguraèního soboru}
+%\chapter{Plakat}
+
+%============================
+\chapter{Pøeklad a zprovoznìní emulátoru}
+
+\section{Pøeklad hardwarové architektury pro FPGA}
+Zdrojové soubory emulátoru pro FPGA se nacházejí na CD v adresáøi "fpga". V podslo¾ce "FITkit" jsou zdrojové soubory, které jsem pøevzal z platformy FITkit. Jedná se o øadièe PS/2, VGA, SDRAM a správy hodinového signálu.
+
+Proto¾e pro pøeklad pou¾ívám prostøedí Xilinx ISE, umístil jsem na CD do slo¾ky "Xilinx" soubor Xilinx.xise. V tomto souboru jsou definovány cesty ke zdrojovým souborùm a lze díky nìmu celý projekt otevøít v prostøedí Xilinx ISE a pøelo¾it jej.
+
+\section{Pøeklad systému ZX Simi OS}
+Operaèní systém ZX Simi OS jsem naprogramoval v jazyce C. Pro pøeklad jsem vyu¾il vývojové prostøedí z88dk \cite{z88dk} ve verzi 1.9, které umo¾òuje pøeklad aplikací pro procesor Z80. Jeho souèástí jsou i upravené standardní knihovny (stdlib.h, stdio.h) pro jednodu¹¹í tvorbu aplikací pro poèítaèe ZX Spectrum. Díky nim lze napøíklad snadno pøistupovat na obrazovku poèítaèe pomocí instrukce printf apod.
+
+Zdrojové soubory operaèního systému jsou ulo¾eny na CD v adresáøi "zx\_simi\_os". Pøed pøekladem je nutné pøidat cestu k pøekladaèi do systémové promìnné PATH. Aplikaci lze pøelo¾it spu¹tìním scriptu make.bat. Výsledkem provedení scriptu je pøelo¾ená aplikace ZX Simi OS ve formátu TAP, tedy v obrazu magnetofonové pásky, pomocí kterého je mo¾né aplikaci naèíst a spustit.
+
+\section{Tvorba obsahu FLASH pamìti}
+Na CD v adresáøi "rom" se nacházejí soubory ROM poèítaèe ZX Spectrum 48K a ZX Spectrum 128K. Dále se zde nacházejí i jejich modifikované verze s upravenou obsluhou rutiny LOAD z kapitoly \ref{sec:upravaROM}. Tyto modifikované verze mají ve svém názvu slovo "\_LOAD".
+
+Na CD v adresáøi "flash" se nachází utilita, která naète soubor ve formátu TAP a odstraní z nìj nepotøebné hlavièky stejným zpùsobem, jako to dìlá i operaèní systém ZX Simi OS bìhem naèítání TAP souboru a jeho ukládání do pamìti. Modifikovaná obslu¾ná rutina LOAD v BASICu toti¾ oèekává právì takto pøedzpracovaná data.
+
+Ve stejném adresáøi se pomocí scriptu "run.bat" vytvoøí soubor "flash.bin", který se ji¾ následnì mù¾e naprogramovat do FLASH pamìti. Tento soubor vznikne spojením modifikované ROM ZX Spectrum 128K a pøedzpracovaného TAP souboru operaèního systému ZX Simi OS z minulého kroku.
+
+Ve FLASH pamìti tedy bude ulo¾ena ROM ZX Spectrum 128K a ihned za ní bude následovat operaèní systém ZX Simi OS tak, jak to oèekává komponenta \texttt{FLASH\_EXT} popsaná v kapitole \ref{sec:extflash}.
+
+\chapter{Ovládání operaèního systému ZX Simi OS}\label{pri:zxsimios}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.4]{img/zxsimios.jpg}
+\caption{Ukázka operaèního systému ZX Simi OS}
+\label{img:zxsimios}
+\end{figure}
+
+
+Na obrázku \ref{img:zxsimios} je ukázka ze spu¹tìného operaèního systému. Pomocí kurzorových ¹ipek nahoru a dolu se pohybuje v seznamu souborù a adresáøù. Adresáø je oznaèen pomocí lomítka pøed názvem.
+
+V pøípadì, ¾e je oznaèen adresáø, klávesou Enter se zobrazí jeho obsah. Z adresáøe lze pøejít o úroveò vý¹ pomocí virtuálního adresáøe \texttt{..} (dvì teèky). Pokud je oznaèen soubor TAP, TZX, ROM, SNA nebo Z80, klávesou Enter se tento soubor spustí.
+
+%============================
+\chapter{Výpis obslu¾né rutiny LOAD z ROM ZX Spectrum 128K}\label{pri:load}
+\includepdf[offset=10mm -20mm]{img/romload.pdf}
+\includepdf[offset=10mm -20mm,page=2]{img/romload.pdf}
+
+\chapter{Schéma zapojení emulátoru}\label{pri:schema}
+\includegraphics[scale=0.4]{fig/speaker.pdf}
+
+\includegraphics[scale=0.3]{fig/oscilator.pdf}
+
+\includegraphics[scale=0.5]{fig/mouse.pdf}
+\includegraphics[scale=0.5]{fig/keyboard.pdf}
+
+\includepdf[offset=10mm -15mm,landscape]{fig/power.pdf}
+\includepdf[offset=10mm -15mm,landscape]{fig/vga.pdf}
+\includepdf[offset=10mm -15mm,landscape]{fig/fpga1.pdf}
+\includepdf[offset=10mm -15mm,landscape]{fig/fpga2.pdf}
+\includepdf[offset=10mm -15mm,landscape]{fig/fpga3.pdf}
+
+\chapter{Plo¹ný spoj}
+\includepdf{fig/pcb.pdf}
+
